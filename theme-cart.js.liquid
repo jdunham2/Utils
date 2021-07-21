@@ -1,19 +1,18 @@
+// @ts-check
 /**
  * Cart Template Script
  * ------------------------------------------------------------------------------
  * A file that contains scripts highly couple code to the Cart template.
  *
+ * JD THEME DEV ADDONS --> includes request.js and validate.js exports
  * @namespace cart
  */
-
-import * as request from './request';
-import * as validate from './validate';
 
 /**
  * Returns the state object of the cart
  * @returns {Promise} Resolves with the state object of the cart (https://help.shopify.com/en/themes/development/getting-started/using-ajax-api#get-cart)
  */
-export function getState() {
+export async function getState() {
   return request.cart();
 }
 
@@ -22,7 +21,7 @@ export function getState() {
  * @param {string} key The unique key of the line item
  * @returns {Promise} Resolves with the index number of the line item
  */
-export function getItemIndex(key) {
+export async function getItemIndex(key) {
   validate.key(key);
 
   return request.cart().then(function(state) {
@@ -47,7 +46,7 @@ export function getItemIndex(key) {
  * @param {string} key The unique key of the line item
  * @returns {Promise} Resolves with the line item object (See response of cart/add.js https://help.shopify.com/en/themes/development/getting-started/using-ajax-api#add-to-cart)
  */
-export function getItem(key) {
+export async function getItem(key) {
   validate.key(key);
 
   return request.cart().then(function(state) {
@@ -75,9 +74,7 @@ export function getItem(key) {
  * @param {object} options.properties Line item property key/values (https://help.shopify.com/en/themes/liquid/objects/line_item#line_item-properties)
  * @returns {Promise} Resolves with the line item object (See response of cart/add.js https://help.shopify.com/en/themes/development/getting-started/using-ajax-api#add-to-cart)
  */
-export function addItem(id, options) {
-  options = options || {};
-
+export async function addItem(id, options) {
   validate.id(id);
 
   return request.cartAdd(id, options.quantity, options.properties);
@@ -105,7 +102,7 @@ export function addItemFromForm(form) {
  * @param {object} options.properties Line item property key/values (https://help.shopify.com/en/themes/liquid/objects/line_item#line_item-properties)
  * @returns {Promise} Resolves with the state object of the cart (https://help.shopify.com/en/themes/development/getting-started/using-ajax-api#get-cart)
  */
-export function updateItem(key, options) {
+export async function updateItem(key, options) {
   validate.key(key);
   validate.options(options);
 
@@ -119,7 +116,7 @@ export function updateItem(key, options) {
  * @param {string} key The unique key of the line item (https://help.shopify.com/en/themes/liquid/objects/line_item#line_item-key)
  * @returns {Promise} Resolves with the state object of the cart (https://help.shopify.com/en/themes/development/getting-started/using-ajax-api#get-cart)
  */
-export function removeItem(key) {
+export async function removeItem(key) {
   validate.key(key);
 
   return getItemIndex(key).then(function(line) {
@@ -139,7 +136,7 @@ export function clearItems() {
  * Gets all cart attributes
  * @returns {Promise} Resolves with the cart attributes object
  */
-export function getAttributes() {
+export async function getAttributes() {
   return request.cart().then(function(state) {
     return state.attributes;
   });
@@ -157,7 +154,7 @@ export function updateAttributes(attributes) {
  * Clears all cart attributes
  * @returns {Promise} Resolves with the cart state object
  */
-export function clearAttributes() {
+export async function clearAttributes() {
   return getAttributes().then(function(attributes) {
     for (var key in attributes) {
       attributes[key] = '';
@@ -170,7 +167,7 @@ export function clearAttributes() {
  * Gets cart note
  * @returns {Promise} Resolves with the cart note string
  */
-export function getNote() {
+export async function getNote() {
   return request.cart().then(function(state) {
     return state.note;
   });
@@ -180,7 +177,7 @@ export function getNote() {
  * Sets cart note
  * @returns {Promise} Resolves with the cart state object
  */
-export function updateNote(note) {
+export async function updateNote(note) {
   return request.cartUpdate({ note: note });
 }
 
@@ -188,7 +185,7 @@ export function updateNote(note) {
  * Clears cart note
  * @returns {Promise} Resolves with the cart state object
  */
-export function clearNote() {
+export async function clearNote() {
   return request.cartUpdate({ note: '' });
 }
 
@@ -196,6 +193,160 @@ export function clearNote() {
  * Get estimated shipping rates.
  * @returns {Promise} Resolves with response of /cart/shipping_rates.json (https://help.shopify.com/en/themes/development/getting-started/using-ajax-api#get-shipping-rates)
  */
-export function getShippingRates() {
+export async function getShippingRates() {
   return request.cartShippingRates();
 }
+export async function fetchJSON(url, config) {
+  return fetch(url, config).then(function(response) {
+    if (!response.ok) {
+      throw response;
+    }
+    return response.json();
+  });
+}
+
+function getDefaultRequestConfig() {
+  return JSON.parse(
+    JSON.stringify({
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json;'
+      }
+    })
+  );
+}
+
+
+/** ==========================================
+ * Modified request.js
+ =============================================*/
+export const request = {
+  cart: async () => {
+    return fetchJSON('/cart.js', getDefaultRequestConfig());
+  },
+
+  cartAdd: async (id, quantity, properties) => {
+    var config = getDefaultRequestConfig();
+
+    config.method = 'POST';
+    config.body = JSON.stringify({
+      id: id,
+      quantity: quantity,
+      properties: properties
+    });
+
+    return fetchJSON('/cart/add.js', config);
+  },
+
+  cartAddFromForm: async (formData) => {
+    var config = getDefaultRequestConfig();
+    delete config.headers['Content-Type'];
+
+    config.method = 'POST';
+    config.body = formData;
+
+    return fetchJSON('/cart/add.js', config);
+  },
+
+  cartChange: async (line, options) => {
+    var config = getDefaultRequestConfig();
+
+    options = options || {};
+
+    config.method = 'POST';
+    config.body = JSON.stringify({
+      line: line,
+      quantity: options.quantity,
+      properties: options.properties
+    });
+
+    return fetchJSON('/cart/change.js', config);
+  },
+
+  cartClear: async () => {
+    var config = getDefaultRequestConfig();
+    config.method = 'POST';
+
+    return fetchJSON('/cart/clear.js', config);
+  },
+
+  cartUpdate: async (body) => {
+    var config = getDefaultRequestConfig();
+
+    config.method = 'POST';
+    config.body = JSON.stringify(body);
+
+    return fetchJSON('/cart/update.js', config);
+  },
+
+  cartShippingRates: () => {
+    return fetchJSON('/cart/shipping_rates.json', getDefaultRequestConfig());
+  }
+}
+
+
+
+/** ==========================================
+ * validate.js
+ * @namespace validate
+ =============================================*/
+ export const validate = {
+   key: (key) => {
+    if (typeof key !== 'string' || key.split(':').length !== 2) {
+      throw new TypeError(
+        'Theme Cart: Provided key value is not a string with the format xxx:xxx'
+      );
+    }
+  },
+
+  quantity: (quantity) => {
+    if (typeof quantity !== 'number' || isNaN(quantity)) {
+      throw new TypeError(
+        'Theme Cart: An object which specifies a quantity or properties value is required'
+      );
+    }
+  },
+
+  id: (id) => {
+    if (typeof id !== 'number' || isNaN(id)) {
+      throw new TypeError('Theme Cart: Variant ID must be a number');
+    }
+  },
+
+  properties: (properties) => {
+    if (typeof properties !== 'object') {
+      throw new TypeError('Theme Cart: Properties must be an object');
+    }
+  },
+
+  form: (form) => {
+    if (!(form instanceof HTMLFormElement)) {
+      throw new TypeError('Theme Cart: Form must be an instance of HTMLFormElement');
+    }
+  },
+
+  options: (options) => {
+    if (typeof options !== 'object') {
+      throw new TypeError('Theme Cart: Options must be an object');
+    }
+
+    if (
+      typeof options.quantity === 'undefined' &&
+      typeof options.properties === 'undefined'
+    ) {
+      throw new Error(
+        'Theme Cart: You muse define a value for quantity or properties'
+      );
+    }
+
+    if (typeof options.quantity !== 'undefined') {
+      validate.quantity(options.quantity);
+    }
+
+    if (typeof options.properties !== 'undefined') {
+      validate.properties(options.properties);
+    }
+  }
+
+ }
