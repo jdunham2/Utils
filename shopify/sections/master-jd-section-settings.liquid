@@ -1,0 +1,191 @@
+<!--
+    This is the master schema to control section settings
+    like bg color, margin, padding
+
+    example use:
+
+    <section class="section section__{{ section.id }}">
+        {%- liquid render 'jd-section-settings', section: section -%}
+
+        <div class="jd-content-container jd-content-container--{{ section.settings.container_size }}">
+            ...
+
+    Implementation notes:
+        Copy the below schema into the main schema "settings" of the section
+            (Below any existing schema it should be the last section settings but before blocks)
+        Add a class of section__{{ section.id }} to the main section
+        render jd-section-settings directly below it
+        wrap all content in a div with the class as in the example above
+
+ -->
+
+
+
+        {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Settings"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Spacing"
+        }, {
+            "type": "checkbox",
+            "id": "hide_desktop",
+            "label": "Hide on Desktop",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_tablet",
+            "label": "Hide on Tablet",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_mobile",
+            "label": "Hide on Mobile",
+            "default": false
+        }, {
+            "type": "select",
+            "id": "container_size",
+            "label": "Max Width",
+            "options": [
+                {
+                    "value": "tiny",
+                    "label": "Tiny"
+                }, {
+                    "value": "small",
+                    "label": "Small"
+                }, {
+                    "value": "medium",
+                    "label": "Medium"
+                }, {
+                    "value": "large",
+                    "label": "Large"
+                }, {
+                    "value": "xlarge",
+                    "label": "xLarge"
+                }, {
+                    "value": "full",
+                    "label": "Full"
+                }
+            ],
+            "default": "large"
+        }, {
+            "type": "text",
+            "id": "min_height",
+            "label": "Min Height",
+            "default": "100%"
+        }, {
+            "type": "text",
+            "id": "padding",
+            "label": "Padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "padding_mobile_new",
+            "label": "Tablet down padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 20px"
+        }, {
+            "type": "text",
+            "id": "margin",
+            "label": "Section margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "header",
+            "content": "Section Color/Image"
+        }, {
+            "type": "color",
+            "id": "text_color",
+            "label": "Section text color"
+        }, {
+            "type": "color",
+            "id": "background_color",
+            "label": "Section background color"
+        }, {
+            "type": "image_picker",
+            "id": "background_image",
+            "label": "Section background image"
+        }, {
+            "type": "select",
+            "id": "background_fit",
+            "label": "Background image fit",
+            "options": [
+                {
+                    "value": "cover",
+                    "label": "Cover"
+                }, {
+                    "value": "contain",
+                    "label": "Contain"
+                }
+            ],
+            "default": "cover"
+        }, {
+            "type": "select",
+            "id": "background_position",
+            "label": "Background image position",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "Top"
+                }, {
+                    "value": "left top",
+                    "label": "Top Left"
+                }, {
+                    "value": "center top",
+                    "label": "Top Center"
+                }, {
+                    "value": "right top",
+                    "label": "Top Right"
+                }, {
+                    "value": "center",
+                    "label": "Center"
+                }, {
+                    "value": "left center",
+                    "label": "Center Left"
+                }, {
+                    "value": "right center",
+                    "label": "Center Right"
+                }, {
+                    "value": "bottom",
+                    "label": "Bottom"
+                }, {
+                    "value": "left bottom",
+                    "label": "Bottom Left"
+                }, {
+                    "value": "center bottom",
+                    "label": "Bottom Center"
+                }, {
+                    "value": "right bottom",
+                    "label": "Bottom Right"
+                }
+            ],
+            "default": "center"
+        }, {
+            "type": "range",
+            "id": "background_overlay_intensity",
+            "label": "Background image overlay intensity",
+            "min": 0,
+            "max": 50,
+            "step": 1,
+            "default": 10
+        }, {
+            "type": "color",
+            "id": "background_overlay_color",
+            "label": "Background image overlay color",
+            "default": "#000000"
+        }, {
+            "type": "checkbox",
+            "id": "reverse_on_mobile",
+            "label": "Reverse on mobile",
+            "default": false
+        }, {
+            "type": "header",
+            "content": "END Section Settings"
+        }
