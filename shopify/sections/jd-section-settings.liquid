@@ -1,0 +1,134 @@
+<!--
+    Reusable logic to add a background image to any section
+    !! Must put in schema content from master-schema-background-and-image-spacing.liquid
+    !! Must put classes on section and container
+
+    example use in master-schema-background-and-image-spacing.liquid
+
+-->
+{%- liquid
+    assign background_image = section.settings.background_image
+    assign background_fit = section.settings.background_fit | default: 'cover'
+    assign background_position = section.settings.background_position | default: 'top'
+    assign background_overlay_intensity = section.settings.background_overlay_intensity | default: '10'
+    assign background_overlay_color = section.settings.background_overlay_color | default: '#000000'
+    assign text_color = section.settings.text_color | default: 'inherit'
+
+    assign section_text_elements = '.section--' | append: section.id
+    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h1'
+    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h2'
+    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h3'
+    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h4'
+    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h5'
+    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h6'
+    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' a'
+-%}
+
+<style>
+  {% if section.settings.hide_desktop %}
+    @media screen and (min-width: 800px) {
+      .section__{{ section.id }} {
+          display: none !important;
+      }
+    }
+  {% endif %}
+  {% if section.settings.hide_tablet %}
+      @media screen and (max-width: 799px) and (min-width: 500px) {
+          .section__{{ section.id }} {
+              display: none !important;
+          }
+      }
+  {% endif %}
+  {% if section.settings.hide_mobile %}
+      @media screen and (max-width: 499px) {
+          .section__{{ section.id }} {
+              display: none !important;
+          }
+      }
+  {% endif %}
+
+  {{ section_text_elements }} {
+    color: {{ text_color }} !important;
+  }
+  .section__{{ section.id }} {
+    position: relative;
+    min-height: {{ section.settings.min_height | default: 'auto' }};
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: {{ section.settings.padding | default: 0 }};
+    margin: {{ section.settings.margin | default: 0 }};
+
+    background-color: {{ section.settings.background_color | default: 'unset' }};
+  }
+
+   @media screen and (max-width: 799px) {
+    .section__{{ section.id }} {
+      {% if section.settings.padding_mobile_new != blank %}
+        padding: {{ section.settings.padding_mobile_new | default: 0 }};
+      {% endif %}
+    }
+  }
+  .section__{{ section.id }} .jd-absolute-full {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    clear: both;
+  }
+  .section__{{ section.id }} .overlay--jd {
+    background-color: {{ background_overlay_color }}{{ background_overlay_intensity }};
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .section__{{ section.id }} .object-fit--jd {
+    object-fit: {{ background_fit }};
+    object-position: {{ background_position }};
+  }
+
+
+  .section__{{ section.id }} .jd-content-container--full {
+        max-width: 100%;
+    }
+
+    .section__{{ section.id }} .jd-content-container--xlarge {
+        max-width: 1600px;
+    }
+
+    .section__{{ section.id }} .jd-content-container--large {
+        max-width: 1400px;
+    }
+
+    .section__{{ section.id }} .jd-content-container--medium {
+        max-width: 1200px;
+    }
+
+    .section__{{ section.id }} .jd-content-container--small {
+        max-width: 980px;
+    }
+
+    .section__{{ section.id }} .jd-content-container--tiny {
+        max-width: 740px;
+    }
+
+    .section__{{ section.id }} .jd-content-container {
+        width: 100%;
+        margin: 0 auto;
+        z-index: 1;
+    }
+
+  /*  */
+</style>
+
+{% if background_image %}
+    <div class="jd-absolute-full">
+        <img class="jd-absolute-full object-fit--jd" src="{{ background_image | img_url: '300x' }}" srcset="{% render 'bgset', image: background_image %}" width="300" height="{{ 300 | divided_by: background_image.aspect_ratio | round }}" alt="{{ background_image.alt }}" loading="lazy"/>
+        <div class="overlay--jd"></div>
+    </div>
+{% endif %}
