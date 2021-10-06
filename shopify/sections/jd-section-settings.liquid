@@ -14,14 +14,14 @@
     assign background_overlay_color = section.settings.background_overlay_color | default: '#000000'
     assign text_color = section.settings.text_color | default: 'inherit'
 
-    assign section_text_elements = '.section--' | append: section.id
-    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h1'
-    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h2'
-    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h3'
-    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h4'
-    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h5'
-    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' h6'
-    assign section_text_elements = section_text_elements | append: ', .section--' | append: section.id | append: ' a'
+    assign section_text_elements = '.section__' | append: section.id
+    assign section_text_elements = section_text_elements | append: ', .section__' | append: section.id | append: ' h1'
+    assign section_text_elements = section_text_elements | append: ', .section__' | append: section.id | append: ' h2'
+    assign section_text_elements = section_text_elements | append: ', .section__' | append: section.id | append: ' h3'
+    assign section_text_elements = section_text_elements | append: ', .section__' | append: section.id | append: ' h4'
+    assign section_text_elements = section_text_elements | append: ', .section__' | append: section.id | append: ' h5'
+    assign section_text_elements = section_text_elements | append: ', .section__' | append: section.id | append: ' h6'
+    assign section_text_elements = section_text_elements | append: ', .section__' | append: section.id | append: ' a'
 -%}
 
 <style>
