@@ -1,37 +1,17 @@
 <script defer src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 <link href="https://unpkg.com/flickity@2/dist/flickity.min.css" rel="stylesheet">
 <style>
-    .section__{{ section.id }} .jd-text--xsmall {
-        font-size: .975rem;
-    }
-    .section__{{ section.id }} .jd-text--small {
-        font-size: 1rem;
-    }
-    .section__{{ section.id }} .jd-text--normal {
-        font-size: 1.5rem;
-    }
-    .section__{{ section.id }} .jd-text--large {
-        font-size: 2rem;
-    }
-    .section__{{ section.id }} .jd-text--xlarge {
-        font-size: 2.5rem;
-    }
-    .section__{{ section.id }} .jd-text--xxlarge {
-        font-size: 3rem;
-    }
-    .section__{{ section.id }} .jd-text--xxxlarge {
-        font-size: 5rem;
-    }
     .section__{{ section.id }} .jd-content-container .jd-grid {
         display: grid;
         grid-template-columns: repeat( {{ section.settings.desktop_cols }} , 1fr);
         gap: {{ section.settings.desktop_col_gap }}px;
-        align-items: center;
+        align-items: {{ section.settings.grid_align | default: 'center' }};
     }
     @media screen and (max-width: 799px) {
         .section__{{ section.id }} .jd-content-container .jd-grid {
             grid-template-columns: repeat( {{ section.settings.tablet_cols }} , 1fr);
             gap: {{ section.settings.mobile_col_gap }}px;
+            align-items: {{ section.settings.grid_align | default: 'center' }};
         }
         .section__{{ section.id }} .jd-content-container.using-mobile-slider .jd-grid {
             display: none;
@@ -55,9 +35,9 @@
 
     .section__{{ section.id }} .carousel-cell {
         width: {{ section.settings.mobile_slider_cell_width | default: '100%' }};
-        display: flex;
+        display: grid;
         justify-content: center;
-        align-items: center;
+        align-items: stretch;
     }
 
     .section__{{section.id}} .flickity-page-dots {
@@ -77,25 +57,22 @@
     }
     /*  */
 </style>
-<!-- FIXME: make sure that it works as carousel too -->
-<section class="section section__{{ section.id }} section-bg-color section-padding-tb section-margin-tb">
-    {%- liquid render 'jd-section-settings', section: section -%}
 
+<section class="section section__{{ section.id }} {{ section.settings.section_classes }}">
+    {% render 'jd-section-settings', section: section %}
     <div class="jd-content-container jd-content-container--{{ section.settings.container_size }} {% if section.settings.use_mobile_slider %} using-mobile-slider {% endif %}">
+        {% render 'jod-snippet-grid-with-content', section: section, outsideGridBlocksOnly: true %}
         {% if section.settings.use_mobile_slider %}
-            {% render 'snippet-grid-image-text', section: section, outsideCarouselBlocksOnly: true %}
             <link href="/path/to/flickity.css" media="screen" rel="stylesheet">
             <div class="main-carousel">
-                {% render 'snippet-grid-image-text', section: section, isCarouselCell: true %}
+                {% render 'jod-snippet-grid-with-content', section: section, isCarouselCell: true %}
             </div>
             <div class="jd-grid">
-                {% render 'snippet-grid-image-text', section: section, isCarouselCell: false %}
+                {% render 'jod-snippet-grid-with-content', section: section, isCarouselCell: false %}
             </div>
         {% else %}
-            <!-- make it so title blocks work here -->
             <div class="jd-grid">
-                {% render 'snippet-grid-image-text', section: section, outsideCarouselBlocksOnly: true %}
-                {% render 'snippet-grid-image-text', section: section, isCarouselCell: false %}
+                {% render 'jod-snippet-grid-with-content', section: section, isCarouselCell: false %}
             </div>
         {% endif %}
     </div>
@@ -119,7 +96,8 @@
                             prevNextButtons: false,
                             imagesLoaded: true,
                             autoPlay: true,
-                            autoPlay: {{ section.settings.slier_timeout | default: 1500 }},
+                            autoPlay: {{ section.settings.slier_timeout | default: 3500 }},
+                            {{ section.settings.flickity_overrides }}
                         });
 
                         const cellsToRemove = document.querySelectorAll('.section__{{ section.id }} .will-remove-cell');
@@ -132,14 +110,21 @@
         }
     });
 
+    document.querySelectorAll('.section .mini-image').forEach((image) => {
+        image.addEventListener('click', (event) => {
+            const replacedSrc = event.target.src.replace('100x', '1920x');
+            image.closest('.section').querySelector('.override-image').src = replacedSrc
+        });
+    });
+
 
 </script>
 
 {% schema %}
 
 {
-    "name": "JD | Grid Image Text",
-    "class": "jod-section-grid-image-text",
+    "name": "JD | Grid with Content",
+    "class": "jod-section-grid-with-content",
     "settings": [
         {
             "type": "header",
@@ -159,6 +144,26 @@
             "id": "mobile_cols",
             "label": "Columns on Mobile",
             "default": 2
+        }, {
+            "type": "select",
+            "id": "grid_align",
+            "label": "Gap Align Items",
+            "options": [
+                {
+                    "value": "center",
+                    "label": "center"
+                }, {
+                    "value": "start",
+                    "label": "start"
+                }, {
+                    "value": "end",
+                    "label": "end"
+                }, {
+                    "value": "stretch",
+                    "label": "stretch"
+                }
+            ],
+            "default": "center"
         }, {
             "type": "number",
             "id": "desktop_col_gap",
@@ -183,12 +188,16 @@
             "type": "number",
             "id": "slier_timeout",
             "label": "Slider Wait (milliseconds)",
-            "default": 1500
+            "default": 3500
         }, {
             "type": "text",
             "id": "mobile_slider_cell_width",
             "label": "Slider Cell Width (css)",
             "default": "100%"
+        }, {
+            "type": "textarea",
+            "id": "flickity_overrides",
+            "label": "Flickity Overrides"
         }, {
             "type": "paragraph",
             "content": "##########"
@@ -216,6 +225,16 @@
             "id": "hide_mobile",
             "label": "Hide on Mobile",
             "default": false
+        }, {
+            "type": "text",
+            "id": "section_classes",
+            "label": "Section classes"
+        }, {
+            "type": "liquid",
+            "id": "section_css",
+            "label": "Section CSS",
+            "default": ".section { }",
+            "info": "use .section - (will be appended with dynamic id)"
         }, {
             "type": "select",
             "id": "container_size",
@@ -266,8 +285,14 @@
             "info": "Accepts same input as css margin",
             "default": "0px 0px"
         }, {
+            "type": "text",
+            "id": "margin_tablet_down",
+            "label": "Tablet down margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
             "type": "header",
-            "content": "Section Color/Image"
+            "content": "Section Background Color"
         }, {
             "type": "color",
             "id": "text_color",
@@ -276,6 +301,13 @@
             "type": "color",
             "id": "background_color",
             "label": "Section background color"
+        }, {
+            "type": "header",
+            "content": "Section Background Image"
+        }, {
+            "type": "text",
+            "id": "section_bg_image_classes",
+            "label": "Background Image Classes"
         }, {
             "type": "image_picker",
             "id": "background_image",
@@ -349,11 +381,6 @@
             "label": "Background image overlay color",
             "default": "#000000"
         }, {
-            "type": "checkbox",
-            "id": "reverse_on_mobile",
-            "label": "Reverse on mobile",
-            "default": false
-        }, {
             "type": "header",
             "content": "END Section Settings"
         }
@@ -367,6 +394,12 @@
                     "type": "text",
                     "id": "block_class",
                     "label": "Block classes"
+                }, {
+                    "type": "liquid",
+                    "id": "block_css",
+                    "label": "Block CSS",
+                    "default": ".block {}",
+                    "info": "use .section and .block - (will be appended with dynamic ids)"
                 }, {
                     "type": "checkbox",
                     "id": "full_width_col",
@@ -393,13 +426,12 @@
                 }, {
                     "type": "richtext",
                     "id": "rich_text",
-                    "label": "Text Rich",
-                    "info": "Use only this or Text HTML not both"
+                    "label": "Richtext content"
                 }, {
-                    "type": "html",
-                    "id": "text",
-                    "label": "Text HTML",
-                    "info": "Use only this or Text Rich not both"
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Liquid text content",
+                    "info": "Will override Richtext field"
                 }, {
                     "type": "select",
                     "id": "align",
@@ -435,37 +467,19 @@
                         }
                     ]
                 }, {
-                    "type": "select",
+                    "type": "range",
                     "id": "size",
-                    "label": "Size",
-                    "default": "default",
-                    "options": [
-                        {
-                            "label": "default",
-                            "value": "default"
-                        }, {
-                            "label": "xSmall",
-                            "value": "xsmall"
-                        }, {
-                            "label": "Small",
-                            "value": "small"
-                        }, {
-                            "label": "Normal",
-                            "value": "normal"
-                        }, {
-                            "label": "Large",
-                            "value": "large"
-                        }, {
-                            "label": "XLarge",
-                            "value": "xlarge"
-                        }, {
-                            "label": "XXLarge",
-                            "value": "xxlarge"
-                        }, {
-                            "label": "XXXLarge",
-                            "value": "xxxlarge"
-                        }
-                    ]
+                    "label": "Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "range",
+                    "id": "size_mobile",
+                    "label": "Mobile Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
                 }, {
                     "type": "color",
                     "id": "color",
@@ -508,6 +522,12 @@
                     "id": "block_class",
                     "label": "Block classes"
                 }, {
+                    "type": "liquid",
+                    "id": "block_css",
+                    "label": "Block CSS",
+                    "default": ".block {}",
+                    "info": "use .section and .block - (will be appended with dynamic ids)"
+                }, {
                     "type": "checkbox",
                     "id": "full_width_col",
                     "label": "Full width",
@@ -535,27 +555,33 @@
                     "id": "image",
                     "label": "Image"
                 }, {
-                    "type": "number",
+                    "type": "text",
+                    "id": "image_classes",
+                    "label": "Image classes"
+                }, {
+                    "type": "text",
                     "id": "image_max_height",
                     "label": "Image Max Height",
-                    "info": "Enter 0 for 100%",
-                    "default": 0
+                    "info": "Accepts CSS for max-height",
+                    "default": "100%"
                 }, {
-                    "type": "number",
+                    "type": "text",
                     "id": "image_max_width",
                     "label": "Image Max Width",
-                    "info": "Enter 0 for 100%",
-                    "default": 0
+                    "info": "Accepts CSS for max-width",
+                    "default": "100%"
                 }, {
-                    "type": "number",
+                    "type": "text",
                     "id": "image_min_width",
                     "label": "Image Min Width",
-                    "default": 0
+                    "info": "Accepts CSS for min-width",
+                    "default": "0"
                 }, {
-                    "type": "number",
+                    "type": "text",
                     "id": "image_margin_bottom",
-                    "label": "Image Bottom Margin",
-                    "default": 0
+                    "label": "Image Margin",
+                    "info": "Accepts CSS for margin",
+                    "default": "0"
                 }, {
                     "type": "select",
                     "id": "image_align",
@@ -580,6 +606,10 @@
                     "type": "header",
                     "content": "Text"
                 }, {
+                    "type": "text",
+                    "id": "text_classes",
+                    "label": "Text Classes"
+                }, {
                     "type": "checkbox",
                     "id": "inline_text",
                     "label": "Display Inline",
@@ -588,13 +618,12 @@
                 }, {
                     "type": "richtext",
                     "id": "rich_text",
-                    "label": "Text Rich",
-                    "info": "Use only this or Text HTML not both"
+                    "label": "Richtext content"
                 }, {
-                    "type": "html",
-                    "id": "text",
-                    "label": "Text HTML",
-                    "info": "Use only this or Text Rich not both"
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Liquid text content",
+                    "info": "Will override Richtext field"
                 }, {
                     "type": "select",
                     "id": "align",
@@ -630,37 +659,19 @@
                         }
                     ]
                 }, {
-                    "type": "select",
+                    "type": "range",
                     "id": "size",
-                    "label": "Size",
-                    "default": "default",
-                    "options": [
-                        {
-                            "label": "default",
-                            "value": "default"
-                        }, {
-                            "label": "xSmall",
-                            "value": "xsmall"
-                        }, {
-                            "label": "Small",
-                            "value": "small"
-                        }, {
-                            "label": "Normal",
-                            "value": "normal"
-                        }, {
-                            "label": "Large",
-                            "value": "large"
-                        }, {
-                            "label": "XLarge",
-                            "value": "xlarge"
-                        }, {
-                            "label": "XXLarge",
-                            "value": "xxlarge"
-                        }, {
-                            "label": "XXXLarge",
-                            "value": "xxxlarge"
-                        }
-                    ]
+                    "label": "Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "range",
+                    "id": "size_mobile",
+                    "label": "Mobile Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
                 }, {
                     "type": "color",
                     "id": "color",
@@ -679,10 +690,6 @@
                     "label": "small"
                 }, {
                     "type": "text",
-                    "id": "classes",
-                    "label": "Classes"
-                }, {
-                    "type": "text",
                     "id": "line_height",
                     "label": "Line Height",
                     "default": "1.2"
@@ -696,6 +703,12 @@
                     "type": "text",
                     "id": "block_class",
                     "label": "Block classes"
+                }, {
+                    "type": "liquid",
+                    "id": "block_css",
+                    "label": "Block CSS",
+                    "default": ".block {}",
+                    "info": "use .section and .block - (will be appended with dynamic ids)"
                 }, {
                     "type": "checkbox",
                     "id": "full_width_col",
@@ -722,13 +735,12 @@
                 }, {
                     "type": "richtext",
                     "id": "rich_text",
-                    "label": "Text Rich",
-                    "info": "Use only this or Text HTML not both"
+                    "label": "Richtext content"
                 }, {
-                    "type": "html",
-                    "id": "text",
-                    "label": "Text HTML",
-                    "info": "Use only this or Text Rich not both"
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Liquid text content",
+                    "info": "Will override Richtext field"
                 }, {
                     "type": "select",
                     "id": "align",
@@ -764,37 +776,19 @@
                         }
                     ]
                 }, {
-                    "type": "select",
+                    "type": "range",
                     "id": "size",
-                    "label": "Size",
-                    "default": "default",
-                    "options": [
-                        {
-                            "label": "default",
-                            "value": "default"
-                        }, {
-                            "label": "xSmall",
-                            "value": "xsmall"
-                        }, {
-                            "label": "Small",
-                            "value": "small"
-                        }, {
-                            "label": "Normal",
-                            "value": "normal"
-                        }, {
-                            "label": "Large",
-                            "value": "large"
-                        }, {
-                            "label": "XLarge",
-                            "value": "xlarge"
-                        }, {
-                            "label": "XXLarge",
-                            "value": "xxlarge"
-                        }, {
-                            "label": "XXXLarge",
-                            "value": "xxxlarge"
-                        }
-                    ]
+                    "label": "Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "range",
+                    "id": "size_mobile",
+                    "label": "Mobile Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
                 }, {
                     "type": "color",
                     "id": "color",
@@ -832,7 +826,7 @@
     ],
     "presets": [
         {
-            "name": "JD | Grid Image Text",
+            "name": "OBVI | Grid with Content",
             "category": "Text"
         }
     ]
