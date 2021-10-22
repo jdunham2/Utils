@@ -1,0 +1,835 @@
+<script defer src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+<link href="https://unpkg.com/flickity@2/dist/flickity.min.css" rel="stylesheet">
+<style>
+    .section__{{ section.id }} .jd-content-container .jd-grid {
+        display: grid;
+        grid-template-columns: repeat( {{ section.settings.desktop_cols }} , 1fr);
+        gap: {{ section.settings.desktop_col_gap }}px;
+        align-items: {{ section.settings.grid_align | default: 'center' }};
+    }
+    @media screen and (max-width: 799px) {
+        .section__{{ section.id }} .jd-content-container .jd-grid {
+            grid-template-columns: repeat( {{ section.settings.tablet_cols }} , 1fr);
+            gap: {{ section.settings.mobile_col_gap }}px;
+            align-items: {{ section.settings.grid_align | default: 'center' }};
+        }
+        .section__{{ section.id }} .jd-content-container.using-mobile-slider .jd-grid {
+            display: none;
+        }
+    }
+    @media screen and (max-width: 499px) {
+        .section__{{ section.id }} .jd-content-container .jd-grid {
+            grid-template-columns: repeat( {{ section.settings.mobile_cols }} , 1fr);
+        }
+        .section__{{ section.id }} .jd-content-container.using-mobile-slider .jd-grid {
+            display: none;
+        }
+    }
+
+    /* Flickity Settings for mobile slider */
+    /* enable Flickity by default */
+    .section__{{ section.id }} .main-carousel:after {
+        content: 'flickity';
+        display: none; /* hide :after */
+    }
+
+    .section__{{ section.id }} .carousel-cell {
+        width: {{ section.settings.mobile_slider_cell_width | default: '100%' }};
+        display: grid;
+        justify-content: center;
+        align-items: stretch;
+    }
+
+    .section__{{section.id}} .flickity-page-dots {
+        bottom: -35px;
+    }
+
+    @media screen and ( min-width: 800px ) {
+        /* disable Flickity for large devices */
+        .section__{{ section.id }} .main-carousel:after {
+            content: '';
+        }
+
+        .section__{{ section.id }} .main-carousel {
+            display: none;
+        }
+
+    }
+    /*  */
+</style>
+
+<section class="section section__{{ section.id }} {{ section.settings.section_classes }}">
+    {% render 'jd-section-settings', section: section %}
+    <div class="jd-content-container jd-content-container--{{ section.settings.container_size }} {% if section.settings.use_mobile_slider %} using-mobile-slider {% endif %}">
+        {% render 'jod-snippet-grid-with-content', section: section, outsideGridBlocksOnly: true %}
+        {% if section.settings.use_mobile_slider %}
+            <link href="/path/to/flickity.css" media="screen" rel="stylesheet">
+            <div class="main-carousel">
+                {% render 'jod-snippet-grid-with-content', section: section, isCarouselCell: true %}
+            </div>
+            <div class="jd-grid">
+                {% render 'jod-snippet-grid-with-content', section: section, isCarouselCell: false %}
+            </div>
+        {% else %}
+            <div class="jd-grid">
+                {% render 'jod-snippet-grid-with-content', section: section, isCarouselCell: false %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    //FLICKITY INITIALIZATIONS
+    document.addEventListener("DOMContentLoaded", function() {
+        if( document.readyState !== 'loading' ) {
+            let win = window.innerWidth;
+            setTimeout(() => {
+                if (win <= 800){
+                    document.querySelectorAll('.section__{{ section.id }} .main-carousel').forEach(carousel => {
+                        let flkty = new Flickity(carousel, {
+                            watchCSS: true,
+                            cellAlign: 'left',
+                            wrapAround: true,
+                            pageDots: {{ section.settings.slider_page_dots | default: false }},
+                            groupCells: true,
+                            freeScroll: true,
+                            prevNextButtons: false,
+                            imagesLoaded: true,
+                            autoPlay: true,
+                            autoPlay: {{ section.settings.slier_timeout | default: 3500 }},
+                            {{ section.settings.flickity_overrides }}
+                        });
+
+                        const cellsToRemove = document.querySelectorAll('.section__{{ section.id }} .will-remove-cell');
+                        flkty.remove( cellsToRemove );
+                    })
+
+                }
+            },250)
+
+        }
+    });
+
+    document.querySelectorAll('.section .mini-image').forEach((image) => {
+        image.addEventListener('click', (event) => {
+            const replacedSrc = event.target.src.replace('100x', '1920x');
+            image.closest('.section').querySelector('.override-image').src = replacedSrc
+        });
+    });
+
+
+</script>
+
+{% schema %}
+
+{
+    "name": "JD | Grid with Content",
+    "class": "jod-section-grid-with-content",
+    "settings": [
+        {
+            "type": "header",
+            "content": "Columns"
+        }, {
+            "type": "number",
+            "id": "desktop_cols",
+            "label": "Columns on Desktop",
+            "default": 4
+        }, {
+            "type": "number",
+            "id": "tablet_cols",
+            "label": "Columns on Tablet",
+            "default": 3
+        }, {
+            "type": "number",
+            "id": "mobile_cols",
+            "label": "Columns on Mobile",
+            "default": 2
+        }, {
+            "type": "select",
+            "id": "grid_align",
+            "label": "Gap Align Items",
+            "options": [
+                {
+                    "value": "center",
+                    "label": "center"
+                }, {
+                    "value": "start",
+                    "label": "start"
+                }, {
+                    "value": "end",
+                    "label": "end"
+                }, {
+                    "value": "stretch",
+                    "label": "stretch"
+                }
+            ],
+            "default": "center"
+        }, {
+            "type": "number",
+            "id": "desktop_col_gap",
+            "label": "Columns Gap",
+            "default": 20
+        }, {
+            "type": "number",
+            "id": "mobile_col_gap",
+            "label": "Columns Gap Mobile",
+            "default": 20
+        }, {
+            "type": "checkbox",
+            "id": "use_mobile_slider",
+            "label": "Use Slider tablet down",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "slider_page_dots",
+            "label": "Show slider dots",
+            "default": false
+        }, {
+            "type": "number",
+            "id": "slier_timeout",
+            "label": "Slider Wait (milliseconds)",
+            "default": 3500
+        }, {
+            "type": "text",
+            "id": "mobile_slider_cell_width",
+            "label": "Slider Cell Width (css)",
+            "default": "100%"
+        }, {
+            "type": "textarea",
+            "id": "flickity_overrides",
+            "label": "Flickity Overrides"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Settings"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Spacing"
+        }, {
+            "type": "checkbox",
+            "id": "hide_desktop",
+            "label": "Hide on Desktop",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_tablet",
+            "label": "Hide on Tablet",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_mobile",
+            "label": "Hide on Mobile",
+            "default": false
+        }, {
+            "type": "text",
+            "id": "section_classes",
+            "label": "Section classes"
+        }, {
+            "type": "liquid",
+            "id": "section_css",
+            "label": "Section CSS",
+            "default": ".section { }",
+            "info": "use .section - (will be appended with dynamic id)"
+        }, {
+            "type": "select",
+            "id": "container_size",
+            "label": "Max Width",
+            "options": [
+                {
+                    "value": "tiny",
+                    "label": "Tiny"
+                }, {
+                    "value": "small",
+                    "label": "Small"
+                }, {
+                    "value": "medium",
+                    "label": "Medium"
+                }, {
+                    "value": "large",
+                    "label": "Large"
+                }, {
+                    "value": "xlarge",
+                    "label": "xLarge"
+                }, {
+                    "value": "full",
+                    "label": "Full"
+                }
+            ],
+            "default": "large"
+        }, {
+            "type": "text",
+            "id": "min_height",
+            "label": "Min Height",
+            "default": "100%"
+        }, {
+            "type": "text",
+            "id": "padding",
+            "label": "Padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "padding_mobile_new",
+            "label": "Tablet down padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 20px"
+        }, {
+            "type": "text",
+            "id": "margin",
+            "label": "Section margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "margin_tablet_down",
+            "label": "Tablet down margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "header",
+            "content": "Section Background Color"
+        }, {
+            "type": "color",
+            "id": "text_color",
+            "label": "Section text color"
+        }, {
+            "type": "color",
+            "id": "background_color",
+            "label": "Section background color"
+        }, {
+            "type": "header",
+            "content": "Section Background Image"
+        }, {
+            "type": "text",
+            "id": "section_bg_image_classes",
+            "label": "Background Image Classes"
+        }, {
+            "type": "image_picker",
+            "id": "background_image",
+            "label": "Section background image"
+        }, {
+            "type": "select",
+            "id": "background_fit",
+            "label": "Background image fit",
+            "options": [
+                {
+                    "value": "cover",
+                    "label": "Cover"
+                }, {
+                    "value": "contain",
+                    "label": "Contain"
+                }
+            ],
+            "default": "cover"
+        }, {
+            "type": "select",
+            "id": "background_position",
+            "label": "Background image position",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "Top"
+                }, {
+                    "value": "left top",
+                    "label": "Top Left"
+                }, {
+                    "value": "center top",
+                    "label": "Top Center"
+                }, {
+                    "value": "right top",
+                    "label": "Top Right"
+                }, {
+                    "value": "center",
+                    "label": "Center"
+                }, {
+                    "value": "left center",
+                    "label": "Center Left"
+                }, {
+                    "value": "right center",
+                    "label": "Center Right"
+                }, {
+                    "value": "bottom",
+                    "label": "Bottom"
+                }, {
+                    "value": "left bottom",
+                    "label": "Bottom Left"
+                }, {
+                    "value": "center bottom",
+                    "label": "Bottom Center"
+                }, {
+                    "value": "right bottom",
+                    "label": "Bottom Right"
+                }
+            ],
+            "default": "center"
+        }, {
+            "type": "range",
+            "id": "background_overlay_intensity",
+            "label": "Background image overlay intensity",
+            "min": 0,
+            "max": 50,
+            "step": 1,
+            "default": 10
+        }, {
+            "type": "color",
+            "id": "background_overlay_color",
+            "label": "Background image overlay color",
+            "default": "#000000"
+        }, {
+            "type": "header",
+            "content": "END Section Settings"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "title",
+            "name": "Title (before grid)",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "block_class",
+                    "label": "Block classes"
+                }, {
+                    "type": "liquid",
+                    "id": "block_css",
+                    "label": "Block CSS",
+                    "default": ".block {}",
+                    "info": "use .section and .block - (will be appended with dynamic ids)"
+                }, {
+                    "type": "checkbox",
+                    "id": "full_width_col",
+                    "label": "Full width",
+                    "default": false
+                }, {
+                    "type": "checkbox",
+                    "id": "full_width_col_mobile",
+                    "label": "Full width (tablet down)",
+                    "default": false
+                }, {
+                    "type": "checkbox",
+                    "id": "show_in_mobile_slider",
+                    "label": "Show in mobile slide",
+                    "default": true
+                }, {
+                    "type": "number",
+                    "id": "max_width",
+                    "label": "Max Width (px)",
+                    "info": "Enter 0 for 100%"
+                }, {
+                    "type": "header",
+                    "content": "Body"
+                }, {
+                    "type": "richtext",
+                    "id": "rich_text",
+                    "label": "Richtext content"
+                }, {
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Liquid text content",
+                    "info": "Will override Richtext field"
+                }, {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "mobile_align",
+                    "label": "Mobile text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "range",
+                    "id": "size",
+                    "label": "Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "range",
+                    "id": "size_mobile",
+                    "label": "Mobile Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "color",
+                    "id": "color",
+                    "label": "Color"
+                }, {
+                    "type": "checkbox",
+                    "id": "bold",
+                    "label": "Bold"
+                }, {
+                    "type": "checkbox",
+                    "id": "italic",
+                    "label": "Italic"
+                }, {
+                    "type": "checkbox",
+                    "id": "small",
+                    "label": "small"
+                }, {
+                    "type": "text",
+                    "id": "padding",
+                    "label": "Padding",
+                    "info": "Accepts same input as CSS padding",
+                    "default": "0 20px"
+                }, {
+                    "type": "text",
+                    "id": "classes",
+                    "label": "Classes"
+                }, {
+                    "type": "text",
+                    "id": "line_height",
+                    "label": "Line Height",
+                    "default": "1.2"
+                }
+            ]
+        }, {
+            "type": "image_with_text",
+            "name": "Image with Text",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "block_class",
+                    "label": "Block classes"
+                }, {
+                    "type": "liquid",
+                    "id": "block_css",
+                    "label": "Block CSS",
+                    "default": ".block {}",
+                    "info": "use .section and .block - (will be appended with dynamic ids)"
+                }, {
+                    "type": "checkbox",
+                    "id": "full_width_col",
+                    "label": "Full width",
+                    "default": false
+                }, {
+                    "type": "checkbox",
+                    "id": "full_width_col_mobile",
+                    "label": "Full width (tablet down)",
+                    "default": false
+                }, {
+                    "type": "number",
+                    "id": "max_width",
+                    "label": "Max Width (px)",
+                    "info": "Enter 0 for 100%"
+                }, {
+                    "type": "number",
+                    "id": "content_padding",
+                    "label": "Inner Content Padding",
+                    "default": 0
+                }, {
+                    "type": "header",
+                    "content": "Image"
+                }, {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                }, {
+                    "type": "text",
+                    "id": "image_classes",
+                    "label": "Image classes"
+                }, {
+                    "type": "text",
+                    "id": "image_max_height",
+                    "label": "Image Max Height",
+                    "info": "Accepts CSS for max-height",
+                    "default": "100%"
+                }, {
+                    "type": "text",
+                    "id": "image_max_width",
+                    "label": "Image Max Width",
+                    "info": "Accepts CSS for max-width",
+                    "default": "100%"
+                }, {
+                    "type": "text",
+                    "id": "image_min_width",
+                    "label": "Image Min Width",
+                    "info": "Accepts CSS for min-width",
+                    "default": "0"
+                }, {
+                    "type": "text",
+                    "id": "image_margin_bottom",
+                    "label": "Image Margin",
+                    "info": "Accepts CSS for margin",
+                    "default": "0"
+                }, {
+                    "type": "select",
+                    "id": "image_align",
+                    "label": "Image Alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "flex-end"
+                        }, {
+                            "label": "Left",
+                            "value": "flex-start"
+                        }
+                    ]
+                }, {
+                    "type": "header",
+                    "content": "##########"
+                }, {
+                    "type": "header",
+                    "content": "Text"
+                }, {
+                    "type": "text",
+                    "id": "text_classes",
+                    "label": "Text Classes"
+                }, {
+                    "type": "checkbox",
+                    "id": "inline_text",
+                    "label": "Display Inline",
+                    "info": "Display text inline with above image",
+                    "default": false
+                }, {
+                    "type": "richtext",
+                    "id": "rich_text",
+                    "label": "Richtext content"
+                }, {
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Liquid text content",
+                    "info": "Will override Richtext field"
+                }, {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "mobile_align",
+                    "label": "Mobile text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "range",
+                    "id": "size",
+                    "label": "Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "range",
+                    "id": "size_mobile",
+                    "label": "Mobile Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "color",
+                    "id": "color",
+                    "label": "Color"
+                }, {
+                    "type": "checkbox",
+                    "id": "bold",
+                    "label": "Bold"
+                }, {
+                    "type": "checkbox",
+                    "id": "italic",
+                    "label": "Italic"
+                }, {
+                    "type": "checkbox",
+                    "id": "small",
+                    "label": "small"
+                }, {
+                    "type": "text",
+                    "id": "line_height",
+                    "label": "Line Height",
+                    "default": "1.2"
+                }
+            ]
+        }, {
+            "type": "text",
+            "name": "Cell Text Only",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "block_class",
+                    "label": "Block classes"
+                }, {
+                    "type": "liquid",
+                    "id": "block_css",
+                    "label": "Block CSS",
+                    "default": ".block {}",
+                    "info": "use .section and .block - (will be appended with dynamic ids)"
+                }, {
+                    "type": "checkbox",
+                    "id": "full_width_col",
+                    "label": "Full width",
+                    "default": false
+                }, {
+                    "type": "checkbox",
+                    "id": "full_width_col_mobile",
+                    "label": "Full width (tablet down)",
+                    "default": false
+                }, {
+                    "type": "checkbox",
+                    "id": "show_in_mobile_slider",
+                    "label": "Show in mobile slide",
+                    "default": true
+                }, {
+                    "type": "number",
+                    "id": "max_width",
+                    "label": "Max Width (px)",
+                    "info": "Enter 0 for 100%"
+                }, {
+                    "type": "header",
+                    "content": "Body"
+                }, {
+                    "type": "richtext",
+                    "id": "rich_text",
+                    "label": "Richtext content"
+                }, {
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Liquid text content",
+                    "info": "Will override Richtext field"
+                }, {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "mobile_align",
+                    "label": "Mobile text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "range",
+                    "id": "size",
+                    "label": "Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "range",
+                    "id": "size_mobile",
+                    "label": "Mobile Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "color",
+                    "id": "color",
+                    "label": "Color"
+                }, {
+                    "type": "checkbox",
+                    "id": "bold",
+                    "label": "Bold"
+                }, {
+                    "type": "checkbox",
+                    "id": "italic",
+                    "label": "Italic"
+                }, {
+                    "type": "checkbox",
+                    "id": "small",
+                    "label": "small"
+                }, {
+                    "type": "text",
+                    "id": "padding",
+                    "label": "Padding",
+                    "info": "Accepts same input as CSS padding",
+                    "default": "0 20px"
+                }, {
+                    "type": "text",
+                    "id": "classes",
+                    "label": "Classes"
+                }, {
+                    "type": "text",
+                    "id": "line_height",
+                    "label": "Line Height",
+                    "default": "1.2"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "OBVI | Grid with Content",
+            "category": "Text"
+        }
+    ]
+}
+
+{% endschema %}
