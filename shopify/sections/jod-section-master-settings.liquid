@@ -4,7 +4,7 @@
     example use:
 
     <section class="section section__{{ section.id }} {{ section.settings.section_classes }}" style="{{ section.settings.section_style }}">
-        {% render 'jd-section-settings', section: section %}
+        {% render 'jod-section-settings', section: section %}
         <div class="jd-content-container jd-content-container--{{ section.settings.container_size }}">
         ...
 
@@ -12,7 +12,7 @@
         Copy the below schema into the main schema "settings" of the section
             (Below any existing schema it should be the last section settings but before blocks)
         Add a class of section__{{ section.id }} to the main section
-        render jd-section-settings directly below it
+        render jod-section-settings directly below it
         wrap all content in a div with the class as in the example above
  -->
 

@@ -59,7 +59,7 @@
 </style>
 
 <section class="section section__{{ section.id }} {{ section.settings.section_classes }}">
-    {% render 'jd-section-settings', section: section %}
+    {% render 'jod-section-settings', section: section %}
     <div class="jd-content-container jd-content-container--{{ section.settings.container_size }} {% if section.settings.use_mobile_slider %} using-mobile-slider {% endif %}">
         {% render 'jod-snippet-grid-with-content', section: section, outsideGridBlocksOnly: true %}
         {% if section.settings.use_mobile_slider %}
