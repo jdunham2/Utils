@@ -1,9 +1,9 @@
 <!--
     Reusable logic to add a background image to any section
-    !! Must add schema content from master-jod-snippet-master-settings.liquid
+    !! Must add schema content from master-jd-section-settings.liquid
     !! Must put classes on section and container
 
-    example use in master-jod-snippet-master-settings.liquid
+    example use in master-jd-section-settings.liquid
 
 -->
 {%- liquid
@@ -25,6 +25,9 @@
 -%}
 
 <style>
+  {% assign sectionClass = '.section__' | append: section.id %}
+  {{ section.settings.section_css | replace: '.section', sectionClass }}
+
   {% if section.settings.hide_desktop %}
     @media screen and (min-width: 800px) {
       .section__{{ section.id }} {
@@ -67,6 +70,9 @@
     .section__{{ section.id }} {
       {% if section.settings.padding_mobile_new != blank %}
         padding: {{ section.settings.padding_mobile_new | default: 0 }};
+      {% endif %}
+      {% if section.settings.margin_tablet_down != blank %}
+        margin: {{ section.settings.margin_tablet_down | default: 0 }};
       {% endif %}
     }
   }
@@ -128,7 +134,7 @@
 
 {% if background_image %}
     <div class="jd-absolute-full">
-        <img class="jd-absolute-full object-fit--jd" src="{{ background_image | img_url: '300x' }}" srcset="{% render 'bgset', image: background_image %}" width="300" height="{{ 300 | divided_by: background_image.aspect_ratio | round }}" alt="{{ background_image.alt }}" loading="lazy"/>
+        <img class="jd-absolute-full object-fit--jd {{ section.settings.section_bg_image_classes }}" src="{{ background_image | img_url: '300x' }}" srcset="{% render 'bgset', image: background_image %}" width="300" height="{{ 300 | divided_by: background_image.aspect_ratio | round }}" alt="{{ background_image.alt }}" loading="lazy"/>
         <div class="overlay--jd"></div>
     </div>
 {% endif %}

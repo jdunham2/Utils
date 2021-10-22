@@ -3,8 +3,8 @@
     like bg color, margin, padding
     example use:
 
-    <section class="section section__{{ section.id }} {{ section.settings.section_classes }}" style="{{ section.settings.section_style }}">
-        {% render 'jod-snippet-master-settings', section: section %}
+    <section class="section section__{{ section.id }} {{ section.settings.section_classes }}">
+        {% render 'jd-section-settings', section: section %}
         <div class="jd-content-container jd-content-container--{{ section.settings.container_size }}">
         ...
 
@@ -12,7 +12,7 @@
         Copy the below schema into the main schema "settings" of the section
             (Below any existing schema it should be the last section settings but before blocks)
         Add a class of section__{{ section.id }} to the main section
-        render jod-snippet-master-settings directly below it
+        render jd-section-settings directly below it
         wrap all content in a div with the class as in the example above
  -->
 
@@ -50,10 +50,11 @@
             "id": "section_classes",
             "label": "Section classes"
         }, {
-            "type": "text",
-            "id": "section_style",
-            "label": "Section styles",
-            "info": "Requires valid CSS -- applied directly in style tag"
+            "type": "liquid",
+            "id": "section_css",
+            "label": "Section CSS",
+            "default": ".section { }",
+            "info": "use .section - (will be appended with dynamic id)"
         }, {
             "type": "select",
             "id": "container_size",
@@ -104,8 +105,14 @@
             "info": "Accepts same input as css margin",
             "default": "0px 0px"
         }, {
+            "type": "text",
+            "id": "margin_tablet_down",
+            "label": "Tablet down margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
             "type": "header",
-            "content": "Section Color/Image"
+            "content": "Section Background Color"
         }, {
             "type": "color",
             "id": "text_color",
@@ -114,6 +121,13 @@
             "type": "color",
             "id": "background_color",
             "label": "Section background color"
+        }, {
+            "type": "header",
+            "content": "Section Background Image"
+        }, {
+            "type": "text",
+            "id": "section_bg_image_classes",
+            "label": "Background Image Classes"
         }, {
             "type": "image_picker",
             "id": "background_image",
@@ -186,11 +200,6 @@
             "id": "background_overlay_color",
             "label": "Background image overlay color",
             "default": "#000000"
-        }, {
-            "type": "checkbox",
-            "id": "reverse_on_mobile",
-            "label": "Reverse on mobile",
-            "default": false
         }, {
             "type": "header",
             "content": "END Section Settings"
