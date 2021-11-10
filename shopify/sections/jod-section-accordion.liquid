@@ -1,0 +1,848 @@
+<style>
+    .section__{{ section.id }} .jd-text--xsmall {
+        font-size: .975rem;
+    }
+    .section__{{ section.id }} .jd-text--small {
+        font-size: 1rem;
+    }
+    .section__{{ section.id }} .jd-text--normal {
+        font-size: 1.5rem;
+    }
+    .section__{{ section.id }} .jd-text--large {
+        font-size: 2rem;
+    }
+    .section__{{ section.id }} .jd-text--xlarge {
+        font-size: 2.5rem;
+    }
+    .section__{{ section.id }} .jd-text--xxlarge {
+        font-size: 3rem;
+    }
+    .section__{{ section.id }} .jd-text--xxxlarge {
+        font-size: 5rem;
+    }
+    .section__{{ section.id }} .jd-content-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        {% if section.settings.side_image_placement == 'right' %}
+            flex-direction: row-reverse;
+        {% endif %}
+    }
+    @media screen and (max-width: 799px) {
+        .section__{{ section.id }} .jd-content-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            {% if section.settings.side_image_placement == 'right' %}
+                flex-direction: column-reverse;
+            {% endif %}
+        }
+    }
+    /*  */
+</style>
+
+<section class="section section__{{ section.id }} {{ section.settings.section_classes }}">
+    {% render 'jd-section-settings', section: section %}
+
+    <div class="jd-content-container jd-content-container--{{ section.settings.container_size }}">
+        <!-- Accordion titles section -->
+        <style>
+            .title-container {
+                width: 100%;
+            }
+        </style>
+        <div class="title-container">
+            {% for block in section.blocks %}
+                {% if block.type == 'text_title' %}
+                    <div class="block__{{ block.id }}">
+                        <style>
+                            .section__{{ section.id }} .block__{{ block.id }} {
+                                width: 100%;
+                                max-width: {{ block.settings.max_width }}px;
+                                {% if block.settings.max_width == 0 %}
+                                    max-width: 100%;
+                                {% endif %}
+                                margin: 0 auto;
+                                padding: {{ block.settings.padding }};
+                            }
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text {
+                                {% if block.settings.color != blank %}
+                                    color: {{block.settings.color }};
+                                {% endif %}
+                                line-height: {{ block.settings.line_height | default: 1.2 }};
+                                {% if block.settings.italic == true %}
+                                    font-style: italic;
+                                {% endif %}
+                                text-align: {{ block.settings.align }};
+                            }
+                            @media screen and (max-width: 799px) {
+                                .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text {
+                                    text-align: {{ block.settings.mobile_align }};
+                                }
+                            }
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text,
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text > * {
+                                {% if block.settings.color != blank %}
+                                    color: {{block.settings.color }};
+                                {% endif %}
+                                {% if block.settings.bold == true %}
+                                    /* font-weight: 700; */
+                                    font-family: var(--text-demi);
+                                {% endif %}
+                            }
+
+                        </style>
+
+                        <div class="jod-section-text__text-container {{ block.settings.classes }}{% if block.settings.align == 'center' %} text-center{% endif %}">
+                            {% if block.settings.small == true %}
+                                <small>
+                                {% endif %}
+
+                                <div class="jod-section-text__text jd-text--{{ block.settings.size }}">
+                                    {% if block.settings.text != blank %}
+                                        {{ block.settings.text }}
+                                    {% elsif block.settings.rich_text != blank %}
+                                        {{ block.settings.rich_text }}
+                                    {% endif %}
+                                </div>
+
+                                {% if block.settings.small == true %}
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Accordion container section -->
+        <style>
+            .section__{{ section.id}} .accordion-container,
+            .section__{{ section.id}} .default-image-container {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: all ease .3s;
+            }
+            .section__{{ section.id}} .accordion-container {
+                {% if section.settings.accordion_content_max_width != 0 %}
+                    max-width: {{ section.settings.accordion_content_max_width }}px;
+                {% endif %}
+                padding: 0 {{ section.settings.accordion_padding }}px;
+                margin: 0 auto;
+            }
+            @media screen and (max-width: 799px) {
+                .section__{{ section.id}} .default-image-container,
+                .section__{{ section.id}} .accordion-container {
+                    width: 100%;
+                }
+                {% if section.settings.hide_side_image_on_mobile == true  %}
+                    .section__{{ section.id}} .default-image-container {
+                        display: none !important;
+                    }
+                {% endif %}
+            }
+            /*  */
+        </style>
+
+        {% unless section.settings.default_image == blank %}
+            <div class="default-image-container">
+                <img src="{{ section.settings.default_image | img_url:'1920x' }}" data-default-src="{{ section.settings.default_image | img_url:'1920x' }}" class="default-image {{ section.settings.default_image_classes }}">
+            </div>
+        {% endunless %}
+
+        <style>
+            .section__{{ section.id}} .block {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .section__{{ section.id }} .block .accordion-wrapper {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .section__{{ section.id }} .accordion-heading {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                border-bottom: 5px solid #ddd;
+                padding: 1rem .75rem;
+                cursor: pointer;
+                z-index: 1;
+            }
+            .section__{{ section.id }} .block .interactive-icon {
+                font-size: 1.5rem;
+                font-weight: 700;
+                display: none;
+            }
+            .section__{{ section.id }} .block.active .shrink-text {
+                display: block;
+            }
+            .section__{{ section.id }} .block:not(.active) .expand-text {
+                display: block;
+            }
+            .section__{{ section.id }} .block:first-of-type {
+                border-top: 5px solid #ddd;
+            }
+            .section__{{ section.id }} .accordion-body {
+                transition: all ease .2s;
+                max-height: 0;
+                opacity: 0;
+                text-align: {{ block.settings.align }};
+            }
+
+            @media screen and (max-width: 799px) {
+                .section__{{ section.id }} .accordion-body {
+                    text-align: {{ block.settings.mobile_align }};
+                }
+            }
+            .section__{{ section.id }} .accordion-body img {
+                padding: 20px; margin: 0 auto;
+            }
+            @media screen and (min-width: 800px) {
+                .section__{{ section.id }} .accordion-body img {
+                    display: none;
+                }
+            }
+            .section__{{ section.id }} .block.active .accordion-body {
+                max-height: 5000px;
+                opacity: 1;
+            }
+            .section__{{ section.id }} .accordion-body .default-image-override {
+                display: none;
+            }
+        </style>
+        <div class="accordion-container">
+            {% for block in section.blocks %}
+                {% if block.type != 'text_title' %}
+                    {% if block.settings.default_image_override %}
+                        <link rel="preload" as="image" href="{{ block.settings.default_image_override | img_url:'1920x' }}">
+                        <link rel="preload" as="image" href="{{ block.settings.default_image_override | img_url:'150x' }}">
+                    {% endif %}
+                    <style>
+                        .section__{{ section.id }} .block__{{ block.id }} .accordion-body {
+                            width: 100%;
+                            color: {{ block.settings.text_color }};
+                            padding-left: {{ block.settings.text_padding_sides | default: 0 }}px;
+                            padding-right: {{ block.settings.text_padding_sides | default: 0 }}px;
+                        }
+                        .section__{{ section.id }} .block__{{ block.id }}.active .accordion-body {
+                            margin-top: 1rem;
+                            margin-bottom: {{ block.settings.text_margin_bottom | default: 0 }}px;
+                        }
+                        /*  */
+                    </style>
+                    <div class="block block__{{ block.id }} {{ block.settings.block_class }}">
+                        <div class="accordion-wrapper">
+                            <div class="accordion-heading" onclick="toggleVisibility('{{ block.id }}')">
+                                <h4>
+                                    {{ block.settings.heading }}
+                                </h4>
+                                <span>
+                                    <span class="interactive-icon expand-text">+</span>
+                                    <span class="interactive-icon shrink-text">–</span>
+                                </span>
+                            </div>
+                            <div class="accordion-body jd-text--{{ block.settings.size }}">
+                                <link rel="preload" as="image" href="{{ block.settings.default_image_override | img_url:'150x' }}">
+                                {% if section.settings.hide_side_image_on_mobile and block.settings.default_image_override != blank  %}
+                                    <div class="text-center">
+                                        <img src="{{ block.settings.default_image_override | img_url:'150x' }}">
+                                    </div>
+                                {% endif %}
+                                {% if block.settings.text != blank %}
+                                    {{ block.settings.text }}
+                                {% elsif block.settings.rich_text != blank %}
+                                    {{ block.settings.rich_text }}
+                                {% endif %}
+                                {% if block.settings.default_image_override %}
+                                    <span class="default-image-override" data-src="{{ block.settings.default_image_override | img_url:'1920x' }}" aria-hidden="true"></span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        function toggleVisibility(clickedBlockId) {
+            const cssTransition = 400; // transition for height is .2s or 200 milliseconds
+            const clickedAccordion = document.querySelector(`.block__${clickedBlockId}`);
+            const wasClickedAccordionActive = clickedAccordion.classList.contains('active');
+            const foundOpenAccordion = clickedAccordion.closest('.section').querySelector('.block.active');
+
+            const hideAccordion = (accordionBlock) => {
+                accordionBlock.classList.remove('active');
+            }
+            const showAccordion = (accordionBlock) => {
+                accordionBlock.classList.add('active');
+                showAccordionImage(accordionBlock);
+            }
+
+            clickedAccordion.closest('.section').querySelectorAll('.block').forEach(accordionBlock => {
+                hideAccordion(accordionBlock);
+            });
+
+            if (!foundOpenAccordion) {
+                showAccordion(clickedAccordion);
+                return;
+            }
+
+            if (!wasClickedAccordionActive) {
+                setTimeout(() => {
+                    showAccordion(clickedAccordion);
+                }, cssTransition)
+            }
+
+            if (wasClickedAccordionActive) {
+                showDefaultImage(clickedAccordion);
+            }
+        }
+
+        function showAccordionImage(accordionBlock) {
+            const defaultImageElement = accordionBlock.closest('.section').querySelector('.default-image');
+            if (!defaultImageElement) {
+                console.log('no default image found');
+                return;
+            }
+
+            const accordionImageElement = accordionBlock.querySelector('.default-image-override');
+            if (!accordionImageElement || !accordionImageElement.dataset.src) {
+                showDefaultImage(accordionBlock);
+                return;
+            }
+            const accordionImageSrc = accordionImageElement.dataset.src;
+            /** @type HTMLImageElement */
+            defaultImageElement.parentElement.classList.add('opacity0');
+            setTimeout(() => {
+                defaultImageElement.src = accordionImageSrc;
+                setTimeout(() => {
+                    defaultImageElement.parentElement.classList.remove('opacity0');
+                }, 300);
+            }, 300);
+        }
+        function showDefaultImage(accordionBlock) {
+            /** @type HTMLImageElement */
+            const defaultImageElement = accordionBlock.closest('.section').querySelector('.default-image');
+            if (!defaultImageElement) {
+                console.log('not using default images');
+                return;
+            }
+            // the src may include http added to it so just see if the defaultSrc is anywhere in it
+            if (defaultImageElement.src.indexOf(defaultImageElement.dataset.defaultSrc) !== -1) return;
+
+            defaultImageElement.parentElement.classList.add('opacity0');
+            setTimeout(() => {
+                defaultImageElement.src = defaultImageElement.dataset.defaultSrc;
+                setTimeout(() => {
+                    defaultImageElement.parentElement.classList.remove('opacity0');
+                }, 300);
+            }, 300);
+        }
+    </script>
+</section>
+
+{% schema %}
+
+{
+    "name": "JOD | Accordion",
+    "class": "jod-section-accordion",
+    "settings": [
+        {
+            "type": "header",
+            "content": "Accordion"
+        }, {
+            "type": "checkbox",
+            "id": "hide_side_image_on_mobile",
+            "label": "Hide side image on mobile",
+            "default": false
+        }, {
+            "type": "select",
+            "id": "side_image_placement",
+            "label": "Side image placement",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                }, {
+                    "value": "right",
+                    "label": "Right"
+                }
+            ],
+            "default": "left"
+        }, {
+            "type": "image_picker",
+            "id": "default_image",
+            "label": "Default Image",
+            "info": "Image when all closed or if no override in block is provided"
+        }, {
+            "type": "text",
+            "id": "default_image_classes",
+            "label": "Default Image classes",
+            "info": "Will apply to accordion override images as well"
+        }, {
+            "type": "number",
+            "id": "accordion_content_max_width",
+            "label": "Accordions Max Width (px)",
+            "info": "Set to 0 for 100%",
+            "default": 500
+        }, {
+            "type": "number",
+            "id": "accordion_padding",
+            "label": "Accordions Padding (px)",
+            "default": 20
+        }, {
+            "type": "number",
+            "id": "accordion_padding_mobile",
+            "label": "Accordions Padding Mobile (px)",
+            "default": 20
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Settings"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Spacing"
+        }, {
+            "type": "checkbox",
+            "id": "hide_desktop",
+            "label": "Hide on Desktop",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_tablet",
+            "label": "Hide on Tablet",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_mobile",
+            "label": "Hide on Mobile",
+            "default": false
+        }, {
+            "type": "text",
+            "id": "section_classes",
+            "label": "Section classes"
+        }, {
+            "type": "liquid",
+            "id": "section_css",
+            "label": "Section CSS",
+            "default": ".section { }",
+            "info": "use .section - (will be appended with dynamic id)"
+        }, {
+            "type": "select",
+            "id": "container_size",
+            "label": "Max Width",
+            "options": [
+                {
+                    "value": "tiny",
+                    "label": "Tiny"
+                }, {
+                    "value": "small",
+                    "label": "Small"
+                }, {
+                    "value": "medium",
+                    "label": "Medium"
+                }, {
+                    "value": "large",
+                    "label": "Large"
+                }, {
+                    "value": "xlarge",
+                    "label": "xLarge"
+                }, {
+                    "value": "full",
+                    "label": "Full"
+                }
+            ],
+            "default": "large"
+        }, {
+            "type": "text",
+            "id": "min_height",
+            "label": "Min Height",
+            "default": "100%"
+        }, {
+            "type": "text",
+            "id": "padding",
+            "label": "Padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "padding_mobile_new",
+            "label": "Tablet down padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 20px"
+        }, {
+            "type": "text",
+            "id": "margin",
+            "label": "Section margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "margin_tablet_down",
+            "label": "Tablet down margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "header",
+            "content": "Section Background Color"
+        }, {
+            "type": "color",
+            "id": "text_color",
+            "label": "Section text color"
+        }, {
+            "type": "color",
+            "id": "background_color",
+            "label": "Section background color"
+        }, {
+            "type": "header",
+            "content": "Section Background Image"
+        }, {
+            "type": "text",
+            "id": "section_bg_image_classes",
+            "label": "Background Image Classes"
+        }, {
+            "type": "image_picker",
+            "id": "background_image",
+            "label": "Section background image"
+        }, {
+            "type": "select",
+            "id": "background_fit",
+            "label": "Background image fit",
+            "options": [
+                {
+                    "value": "cover",
+                    "label": "Cover"
+                }, {
+                    "value": "contain",
+                    "label": "Contain"
+                }
+            ],
+            "default": "cover"
+        }, {
+            "type": "select",
+            "id": "background_position",
+            "label": "Background image position",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "Top"
+                }, {
+                    "value": "left top",
+                    "label": "Top Left"
+                }, {
+                    "value": "center top",
+                    "label": "Top Center"
+                }, {
+                    "value": "right top",
+                    "label": "Top Right"
+                }, {
+                    "value": "center",
+                    "label": "Center"
+                }, {
+                    "value": "left center",
+                    "label": "Center Left"
+                }, {
+                    "value": "right center",
+                    "label": "Center Right"
+                }, {
+                    "value": "bottom",
+                    "label": "Bottom"
+                }, {
+                    "value": "left bottom",
+                    "label": "Bottom Left"
+                }, {
+                    "value": "center bottom",
+                    "label": "Bottom Center"
+                }, {
+                    "value": "right bottom",
+                    "label": "Bottom Right"
+                }
+            ],
+            "default": "center"
+        }, {
+            "type": "range",
+            "id": "background_overlay_intensity",
+            "label": "Background image overlay intensity",
+            "min": 0,
+            "max": 50,
+            "step": 1,
+            "default": 10
+        }, {
+            "type": "color",
+            "id": "background_overlay_color",
+            "label": "Background image overlay color",
+            "default": "#000000"
+        }, {
+            "type": "header",
+            "content": "END Section Settings"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "accordion_item",
+            "name": "Accordion Item",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "block_class",
+                    "label": "Block classes"
+                }, {
+                    "type": "header",
+                    "content": "Text"
+                }, {
+                    "type": "richtext",
+                    "id": "heading",
+                    "label": "Heading"
+                }, {
+                    "type": "richtext",
+                    "id": "rich_text",
+                    "label": "Body richtext",
+                    "info": "Use only this or Body HTML not both"
+                }, {
+                    "type": "html",
+                    "id": "text",
+                    "label": "Body HTML",
+                    "info": "Use only this or Body Rich not both"
+                }, {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "mobile_align",
+                    "label": "Mobile text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "size",
+                    "label": "Size",
+                    "default": "default",
+                    "options": [
+                        {
+                            "label": "default",
+                            "value": "default"
+                        }, {
+                            "label": "xSmall",
+                            "value": "xsmall"
+                        }, {
+                            "label": "Small",
+                            "value": "small"
+                        }, {
+                            "label": "Normal",
+                            "value": "normal"
+                        }, {
+                            "label": "Large",
+                            "value": "large"
+                        }, {
+                            "label": "XLarge",
+                            "value": "xlarge"
+                        }, {
+                            "label": "XXLarge",
+                            "value": "xxlarge"
+                        }, {
+                            "label": "XXXLarge",
+                            "value": "xxxlarge"
+                        }
+                    ]
+                }, {
+                    "type": "color",
+                    "id": "text_color",
+                    "label": "Text Color"
+                }, {
+                    "type": "range",
+                    "id": "text_margin_bottom",
+                    "label": "Text Margin Bottom",
+                    "min": 0,
+                    "max": 48,
+                    "step": 4,
+                    "default": 20
+                }, {
+                    "type": "number",
+                    "id": "text_padding_sides",
+                    "label": "Text side padding(px)",
+                    "default": 20
+                }, {
+                    "type": "header",
+                    "content": "Image Settings"
+                }, {
+                    "type": "paragraph",
+                    "content": "##########"
+                }, {
+                    "type": "image_picker",
+                    "id": "default_image_override",
+                    "label": "Default Image Override"
+                }
+            ]
+        }, {
+            "type": "text_title",
+            "name": "Accordion Title",
+            "settings": [
+                {
+                    "type": "number",
+                    "id": "max_width",
+                    "label": "Max Width (px)",
+                    "info": "Enter 0 for 100%"
+                }, {
+                    "type": "header",
+                    "content": "Body"
+                }, {
+                    "type": "richtext",
+                    "id": "rich_text",
+                    "label": "Text Rich",
+                    "info": "Use only this or Text HTML not both"
+                }, {
+                    "type": "html",
+                    "id": "text",
+                    "label": "Text HTML",
+                    "info": "Use only this or Text Rich not both"
+                }, {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "mobile_align",
+                    "label": "Mobile text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "size",
+                    "label": "Size",
+                    "default": "default",
+                    "options": [
+                        {
+                            "label": "default",
+                            "value": "default"
+                        }, {
+                            "label": "xSmall",
+                            "value": "xsmall"
+                        }, {
+                            "label": "Small",
+                            "value": "small"
+                        }, {
+                            "label": "Normal",
+                            "value": "normal"
+                        }, {
+                            "label": "Large",
+                            "value": "large"
+                        }, {
+                            "label": "XLarge",
+                            "value": "xlarge"
+                        }, {
+                            "label": "XXLarge",
+                            "value": "xxlarge"
+                        }, {
+                            "label": "XXXLarge",
+                            "value": "xxxlarge"
+                        }
+                    ]
+                }, {
+                    "type": "color",
+                    "id": "color",
+                    "label": "Color"
+                }, {
+                    "type": "checkbox",
+                    "id": "bold",
+                    "label": "Bold"
+                }, {
+                    "type": "checkbox",
+                    "id": "italic",
+                    "label": "Italic"
+                }, {
+                    "type": "checkbox",
+                    "id": "small",
+                    "label": "small"
+                }, {
+                    "type": "text",
+                    "id": "padding",
+                    "label": "Padding",
+                    "info": "Accepts same input as CSS padding",
+                    "default": "0 20px"
+                }, {
+                    "type": "text",
+                    "id": "classes",
+                    "label": "Classes"
+                }, {
+                    "type": "text",
+                    "id": "line_height",
+                    "label": "Line Height",
+                    "default": "1.2"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "JOD | Accordion",
+            "category": "Text"
+        }
+    ]
+}
+
+{% endschema %}
