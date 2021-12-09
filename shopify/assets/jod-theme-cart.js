@@ -10,7 +10,7 @@
 
 /**
  * Returns the state object of the cart
- * @returns {Promise} Resolves with the state object of the cart (https://help.shopify.com/en/themes/development/getting-started/using-ajax-api#get-cart)
+ * @returns {Promise<Cart>} Resolves with the state object of the cart (https://help.shopify.com/en/themes/development/getting-started/using-ajax-api#get-cart)
  */
 export async function getState() {
   return request.cart();

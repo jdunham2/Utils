@@ -3,8 +3,8 @@
 
     Created in Liquid for Shopify
     add to theme.liquid with
-        <link rel="stylesheet" href="{{ 'jod-css-library.css&enable_css_minification=1' | asset_url }}">
-        {{ 'jod-css-library.css&enable_css_minification=1' | asset_url | stylesheet_tag }}
+        <link rel="stylesheet" href="{{ 'jod-css-library.css?enable_css_minification=1' | asset_url }}">
+        {{ 'jod-css-library.css?enable_css_minification=1' | asset_url | stylesheet_tag }}
 ============================================================================ **/
 {% assign mediaQuerySizes = ',--mobile,--tablet,--tablet-down,--desktop' | split: ',' %}
 {% for mediaSize in mediaQuerySizes %}

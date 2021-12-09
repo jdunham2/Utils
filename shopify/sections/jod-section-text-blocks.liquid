@@ -1,0 +1,375 @@
+<section class="section section__{{ section.id }} {{ section.settings.section_classes }}">
+    {% render 'jod-snippet-master-settings', section: section %}
+
+    <div class="jd-content-container jd-content-container--{{ section.settings.container_size }}">
+        {% for block in section.blocks %}
+            <div class="block block__{{ block.id }} {{ block.settings.block_class }}">
+                {% assign sectionClass = '.section__' | append: section.id %}
+                {% assign blockClass = '.block__' | append: block.id %}
+                <style>
+                    {{ block.settings.block_css | replace: '.section', sectionClass | replace: '.block', blockClass }}
+                    /*  */
+                </style>
+                <style>
+                    .section__{{ section.id }} .block__{{ block.id }} .jod-section-text__text {
+                        line-height: {{ block.settings.line_height | default: 1.2 }};
+                        {% if block.settings.italic == true %}
+                            font-style: italic;
+                        {% endif %}
+                        padding: {{ block.settings.padding_1 }};
+                        text-align: {{ block.settings.align }};
+                    }
+                    @media screen and (max-width: 799px) {
+                        .section__{{ section.id }} .block__{{ block.id }} .jod-section-text__text {
+                            text-align: {{ block.settings.mobile_align }};
+                        }
+                    }
+                    .section__{{ section.id }} .block__{{ block.id }} .jod-section-text__text,
+                    .section__{{ section.id }} .block__{{ block.id }} .jod-section-text__text > * {
+                        {% if block.settings.color != blank %}
+                            color: {{ block.settings.color }};
+                        {% endif %}
+                        {% if block.settings.bold == true %}
+                        /* maybe we can use a liquid capture and test if text-demi exists */
+                        /* and use font-weight as a fall-back */
+                            /* font-weight: 700; */
+                            font-family: var(--text-demi);
+                        {% endif %}
+                    }
+
+                </style>
+
+                <div class="jod-section-text__text-container">
+                    {% if block.settings.small == true %}
+                        <small>
+                        {% endif %}
+
+                        <div class="jod-section-text__text font-size-{{ block.settings.size }} font-size-{{ block.settings.size_mobile }}--tablet-down">
+                            {% if block.settings.text_liquid != blank %}
+                                {{ block.settings.text_liquid }}
+                            {% elsif block.settings.rich_text != blank %}
+                                {{ block.settings.rich_text }}
+                            {% endif %}
+                        </div>
+
+                        {% if block.settings.small == true %}
+                        </small>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% schema %}
+
+{
+    "name": "JOD | Text Blocks",
+    "class": "jod-section-text-blocks",
+    "settings": [
+        {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Settings"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Spacing"
+        }, {
+            "type": "checkbox",
+            "id": "hide_desktop",
+            "label": "Hide on Desktop",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_tablet",
+            "label": "Hide on Tablet",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_mobile",
+            "label": "Hide on Mobile",
+            "default": false
+        }, {
+            "type": "text",
+            "id": "section_classes",
+            "label": "Section classes"
+        }, {
+            "type": "liquid",
+            "id": "section_css",
+            "label": "Section CSS",
+            "default": ".section { }",
+            "info": "use .section - (will be appended with dynamic id)"
+        }, {
+            "type": "select",
+            "id": "container_size",
+            "label": "Max Width",
+            "options": [
+                {
+                    "value": "tiny",
+                    "label": "Tiny"
+                }, {
+                    "value": "small",
+                    "label": "Small"
+                }, {
+                    "value": "medium",
+                    "label": "Medium"
+                }, {
+                    "value": "large",
+                    "label": "Large"
+                }, {
+                    "value": "xlarge",
+                    "label": "xLarge"
+                }, {
+                    "value": "full",
+                    "label": "Full"
+                }
+            ],
+            "default": "large"
+        }, {
+            "type": "text",
+            "id": "min_height",
+            "label": "Min Height",
+            "default": "100%"
+        }, {
+            "type": "text",
+            "id": "padding",
+            "label": "Padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "padding_mobile_new",
+            "label": "Tablet down padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 20px"
+        }, {
+            "type": "text",
+            "id": "margin",
+            "label": "Section margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "margin_tablet_down",
+            "label": "Tablet down margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "header",
+            "content": "Section Background Color"
+        }, {
+            "type": "color",
+            "id": "text_color",
+            "label": "Section text color"
+        }, {
+            "type": "color",
+            "id": "background_color",
+            "label": "Section background color"
+        }, {
+            "type": "header",
+            "content": "Section Background Image"
+        }, {
+            "type": "text",
+            "id": "section_bg_image_classes",
+            "label": "Background Image Classes"
+        }, {
+            "type": "image_picker",
+            "id": "background_image",
+            "label": "Section background image"
+        }, {
+            "type": "select",
+            "id": "background_fit",
+            "label": "Background image fit",
+            "options": [
+                {
+                    "value": "cover",
+                    "label": "Cover"
+                }, {
+                    "value": "contain",
+                    "label": "Contain"
+                }
+            ],
+            "default": "cover"
+        }, {
+            "type": "select",
+            "id": "background_position",
+            "label": "Background image position",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "Top"
+                }, {
+                    "value": "left top",
+                    "label": "Top Left"
+                }, {
+                    "value": "center top",
+                    "label": "Top Center"
+                }, {
+                    "value": "right top",
+                    "label": "Top Right"
+                }, {
+                    "value": "center",
+                    "label": "Center"
+                }, {
+                    "value": "left center",
+                    "label": "Center Left"
+                }, {
+                    "value": "right center",
+                    "label": "Center Right"
+                }, {
+                    "value": "bottom",
+                    "label": "Bottom"
+                }, {
+                    "value": "left bottom",
+                    "label": "Bottom Left"
+                }, {
+                    "value": "center bottom",
+                    "label": "Bottom Center"
+                }, {
+                    "value": "right bottom",
+                    "label": "Bottom Right"
+                }
+            ],
+            "default": "center"
+        }, {
+            "type": "range",
+            "id": "background_overlay_intensity",
+            "label": "Background image overlay intensity",
+            "min": 0,
+            "max": 50,
+            "step": 1,
+            "default": 10
+        }, {
+            "type": "color",
+            "id": "background_overlay_color",
+            "label": "Background image overlay color",
+            "default": "#000000"
+        }, {
+            "type": "header",
+            "content": "END Section Settings"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "name": "Text",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "block_class",
+                    "label": "Block classes"
+                }, {
+                    "type": "liquid",
+                    "id": "block_css",
+                    "label": "Block CSS",
+                    "default": ".block {}",
+                    "info": "use .section and .block - (will be appended with dynamic ids)"
+                }, {
+                    "type": "header",
+                    "content": "Text Content"
+                }, {
+                    "type": "richtext",
+                    "id": "rich_text",
+                    "label": "Richtext content"
+                }, {
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Liquid text content",
+                    "info": "Will override Richtext field"
+                }, {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "mobile_align",
+                    "label": "Mobile text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "range",
+                    "id": "size",
+                    "label": "Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "range",
+                    "id": "size_mobile",
+                    "label": "Mobile Size (px)",
+                    "default": 16,
+                    "min": 8,
+                    "max": 55
+                }, {
+                    "type": "color",
+                    "id": "color",
+                    "label": "Color"
+                }, {
+                    "type": "color",
+                    "id": "background_color",
+                    "label": "Background color"
+                }, {
+                    "type": "checkbox",
+                    "id": "bold",
+                    "label": "Bold"
+                }, {
+                    "type": "checkbox",
+                    "id": "italic",
+                    "label": "Italic"
+                }, {
+                    "type": "checkbox",
+                    "id": "small",
+                    "label": "small"
+                }, {
+                    "type": "text",
+                    "id": "padding_1",
+                    "label": "Padding",
+                    "info": "Accepts same input as CSS padding",
+                    "default": "0 20px"
+                }, {
+                    "type": "text",
+                    "id": "line_height",
+                    "label": "Line Height",
+                    "default": "1.2"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "JOD | Text Blocks",
+            "category": "Custom"
+        }
+    ]
+}
+
+{% endschema %}

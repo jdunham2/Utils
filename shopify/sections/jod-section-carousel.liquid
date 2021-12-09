@@ -1,0 +1,798 @@
+<style>
+    .section__{{ section.id }} .jd-text--xsmall {
+        font-size: .975rem;
+    }
+    .section__{{ section.id }} .jd-text--small {
+        font-size: 1rem;
+    }
+    .section__{{ section.id }} .jd-text--normal {
+        font-size: 1.5rem;
+    }
+    .section__{{ section.id }} .jd-text--large {
+        font-size: 2rem;
+    }
+    .section__{{ section.id }} .jd-text--xlarge {
+        font-size: 2.5rem;
+    }
+    .section__{{ section.id }} .jd-text--xxlarge {
+        font-size: 3rem;
+    }
+    .section__{{ section.id }} .jd-text--xxxlarge {
+        font-size: 5rem;
+    }
+
+    /* RESULTS CAROUSEL */
+    .section__{{section.id}} {
+        position: relative;
+    }
+
+    .section__{{section.id}} .results {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+
+    }
+
+    .section__{{section.id}} .results:after {
+        content: '';
+        display: none;
+    }
+
+    .section__{{section.id}} .results_carousel {
+        display: block !important;
+    }
+
+    .section__{{section.id}} .results_carousel:after {
+        content: 'flickity' !important;
+    }
+
+    .section__{{section.id}} .result_cell {
+        width: {{ section.settings.cell_width | default: 'calc(100% / 3)' }};
+        /* width: calc(100% / 3); */
+    }
+
+    .section__{{section.id}} .result_image {
+        width: 100%;
+    }
+
+    .section__{{section.id}} .result_image img {
+        width: 100%;
+        object-fit: contain;
+        display: block;
+        border-radius: 10px;
+    }
+
+
+    @media(max-width: 900px) {
+        .section__{{section.id}} {
+            width: 100%;
+        }
+
+        .section__{{section.id}} .results_mobile {
+            display: block;
+        }
+
+        .section__{{section.id}} .results_mobile:after {
+            content: 'flickity' !important;
+        }
+        .section__{{section.id}} .result_cell {
+            width: {{ section.settings.cell_width_tablet_down | default: 'calc((100% / 4.5) + 20%)' }};
+            /* width: calc((100% / 4.5) + 20%); */
+        }
+        .section__{{section.id}} .result_image img {
+            border-radius: 1vw;
+        }
+
+        .section__{{section.id}} .flickity-page-dots {
+            bottom: -35px;
+        }
+    }
+</style>
+
+<section class="section section__{{ section.id }} {{ section.settings.section_classes }}">
+    {% render 'jod-snippet-master-settings', section: section %}
+    <div class="jd-content-container jd-content-con tainer--{{ section.settings.container_size }}">
+        <!-- Titles section -->
+        <style>
+            .title-container {
+                width: 100%;
+            }
+        </style>
+        <div class="title-container">
+            {% for block in section.blocks %}
+                {% if block.type == 'text_title' %}
+                    <div class="block__{{ block.id }}">
+                        <style>
+                            .section__{{ section.id }} .block__{{ block.id }} {
+                                width: 100%;
+                                max-width: {{ block.settings.max_width }}px;
+                                {% if block.settings.max_width == 0 %}
+                                    max-width: 100%;
+                                {% endif %}
+                                margin: 0 auto;
+                                padding: {{ block.settings.padding }};
+                            }
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text {
+                                {% if block.settings.color != blank %}
+                                    color: {{block.settings.color }};
+                                {% endif %}
+                                line-height: {{ block.settings.line_height | default: 1.2 }};
+                                {% if block.settings.italic == true %}
+                                    font-style: italic;
+                                {% endif %}
+                                text-align: {{ block.settings.align }};
+                            }
+                            @media screen and (max-width: 799px) {
+                                .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text {
+                                    text-align: {{ block.settings.mobile_align }};
+                                }
+                            }
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text,
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text > * {
+                                {% if block.settings.color != blank %}
+                                    color: {{block.settings.color }};
+                                {% endif %}
+                                {% if block.settings.bold == true %}
+                                    /* font-weight: 700; */
+                                    font-family: var(--text-demi);
+                                {% endif %}
+                            }
+
+                        </style>
+
+                        <div class="jod-section-text__text-container {{ block.settings.classes }}">
+                            {% if block.settings.small == true %}
+                                <small>
+                                {% endif %}
+
+                                <div class="jod-section-text__text jd-text--{{ block.settings.size }}">
+                                    {% if block.settings.text_liquid != blank %}
+                                        {{ block.settings.text_liquid }}
+                                    {% elsif block.settings.text != blank %}
+                                        {{ block.settings.text }}
+                                    {% elsif block.settings.rich_text != blank %}
+                                        {{ block.settings.rich_text }}
+                                    {% endif %}
+                                </div>
+
+                                {% if block.settings.small == true %}
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Image Cell section -->
+        {%- liquid
+            assign cell_count = 0
+            for block in section.blocks
+                if block.type == 'result_cell'
+                    assign cell_count = cell_count | plus: 1
+                endif
+            endfor
+        -%}
+        <div class="results {% if cell_count > 3 %} results_carousel {% else %} {% if cell_count > 1 %} results_mobile {% endif %} {% endif %}">
+            {% for block in section.blocks %}
+                {%- liquid
+                if block.type != 'result_cell'
+                    continue
+                endif
+            -%}
+                <div class="result_cell">
+                    <div class="block block__{{block.id}}">
+                        <!-- Image -->
+                        {% if block.settings.result_image != blank %}
+                            <div class="result_image">
+                                <img src="{{block.settings.result_image | img_url: '900x'}}">
+                            </div>
+                        {% endif %}
+
+                        <!-- text -->
+                        <style>
+                            /* .section__{{ section.id }} .block__{{ block.id }} {
+                                width: 100%;
+                                margin: 0 auto;
+                            } */
+                            .section__{{ section.id }} .block__{{ block.id }} .result_image {
+                                padding: {{ block.settings.image_padding }};
+                            }
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text {
+                                {% if block.settings.color != blank %}
+                                    color: {{block.settings.color }};
+                                {% endif %}
+                                padding: {{ block.settings.padding }};
+                                width: 100%;
+                                margin: 0 auto;
+                                max-width: {{ block.settings.max_width }}px;
+                                {% if block.settings.max_width == 0 %}
+                                    max-width: 100%;
+                                {% endif %}
+                                line-height: {{ block.settings.line_height | default: 1.2 }};
+                                {% if block.settings.bold == true %}
+                                    font-weight: 700;
+                                {% endif %}
+                                {% if block.settings.italic == true %}
+                                    font-style: italic;
+                                {% endif %}
+                                text-align: {{ block.settings.align }};
+                            }
+                            @media screen and (max-width: 799px) {
+                                .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text {
+                                    text-align: {{ block.settings.mobile_align }};
+                                }
+                            }
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text,
+                            .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text > * {
+                                {% if block.settings.color != blank %}
+                                    color: {{block.settings.color }};
+                                {% endif %}
+                                {% if block.settings.bold == true %}
+                                    /* font-weight: 700; */
+                                    font-family: var(--text-demi);
+                                {% endif %}
+                            }
+
+                        </style>
+
+                        <div class="jod-section-text__text-container {{ block.settings.classes }}">
+                            {% if block.settings.small == true %}
+                                <small>
+                                {% endif %}
+
+                                <div class="jod-section-text__text jd-text--{{ block.settings.size }}">
+                                    {% if block.settings.text_liquid != blank %}
+                                        {{ block.settings.text_liquid }}
+                                    {% elsif block.settings.text != blank %}
+                                        {{ block.settings.text }}
+                                    {% elsif block.settings.rich_text != blank %}
+                                        {{ block.settings.rich_text }}
+                                    {% endif %}
+                                </div>
+
+                                {% if block.settings.small == true %}
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    //FLICKITY INITIALIZATIONS
+document.addEventListener("DOMContentLoaded", function() {
+    if( document.readyState !== 'loading' ) {
+        let win = window.innerWidth;
+        setTimeout(() => {
+            if (win >= 900) {
+
+                document.querySelectorAll('.section__{{ section.id }} .results').forEach(results => {
+                    let flkty = new Flickity(results, {
+                        watchCSS: true,
+                        cellAlign: 'left',
+                        wrapAround: true,
+                        pageDots: false,
+                        prevNextButtons: true,
+                        imagesLoaded: true,
+                        {{ section.settings.flickity_overrides }}
+                    });
+                });
+
+            }
+
+            if (win <= 900){
+                document.querySelectorAll('.results').forEach(results => {
+                    let flkty = new Flickity(results, {
+                        watchCSS: true,
+                        cellAlign: 'left',
+                        wrapAround: true,
+                        // pageDots: false,
+                        groupCells: true,
+                        freeScroll: true,
+                        prevNextButtons: false,
+                        imagesLoaded: true,
+                        {{ section.settings.flickity_overrides_mobile }}
+                    });
+                })
+
+            }
+        },250)
+    }
+});
+
+
+</script>
+
+{% schema %}
+
+{
+    "name": "JOD | Carousel",
+    "settings": [
+        {
+            "type": "text",
+            "id": "cell_width",
+            "label": "Cell Width",
+            "default": "calc(100% / 3)"
+        }, {
+            "type": "text",
+            "id": "cell_width_tablet_down",
+            "label": "Cell Width Tablet Down",
+            "default": "calc((100% / 4.5) + 20%)"
+        }, {
+            "type": "textarea",
+            "id": "flickity_overrides",
+            "label": "Flickity Overrides"
+        }, {
+            "type": "textarea",
+            "id": "flickity_overrides_mobile",
+            "label": "Flickity Overrides Mobile"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Settings"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Spacing"
+        }, {
+            "type": "checkbox",
+            "id": "hide_desktop",
+            "label": "Hide on Desktop",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_tablet",
+            "label": "Hide on Tablet",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_mobile",
+            "label": "Hide on Mobile",
+            "default": false
+        }, {
+            "type": "text",
+            "id": "section_classes",
+            "label": "Section classes"
+        }, {
+            "type": "liquid",
+            "id": "section_css",
+            "label": "Section CSS",
+            "default": ".section { }",
+            "info": "use .section - (will be appended with dynamic id)"
+        }, {
+            "type": "select",
+            "id": "container_size",
+            "label": "Max Width",
+            "options": [
+                {
+                    "value": "tiny",
+                    "label": "Tiny"
+                }, {
+                    "value": "small",
+                    "label": "Small"
+                }, {
+                    "value": "medium",
+                    "label": "Medium"
+                }, {
+                    "value": "large",
+                    "label": "Large"
+                }, {
+                    "value": "xlarge",
+                    "label": "xLarge"
+                }, {
+                    "value": "full",
+                    "label": "Full"
+                }
+            ],
+            "default": "large"
+        }, {
+            "type": "text",
+            "id": "min_height",
+            "label": "Min Height",
+            "default": "100%"
+        }, {
+            "type": "text",
+            "id": "padding",
+            "label": "Padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "padding_mobile_new",
+            "label": "Tablet down padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 20px"
+        }, {
+            "type": "text",
+            "id": "margin",
+            "label": "Section margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "margin_tablet_down",
+            "label": "Tablet down margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "header",
+            "content": "Section Background Color"
+        }, {
+            "type": "color",
+            "id": "text_color",
+            "label": "Section text color"
+        }, {
+            "type": "color",
+            "id": "background_color",
+            "label": "Section background color"
+        }, {
+            "type": "header",
+            "content": "Section Background Image"
+        }, {
+            "type": "text",
+            "id": "section_bg_image_classes",
+            "label": "Background Image Classes"
+        }, {
+            "type": "image_picker",
+            "id": "background_image",
+            "label": "Section background image"
+        }, {
+            "type": "select",
+            "id": "background_fit",
+            "label": "Background image fit",
+            "options": [
+                {
+                    "value": "cover",
+                    "label": "Cover"
+                }, {
+                    "value": "contain",
+                    "label": "Contain"
+                }
+            ],
+            "default": "cover"
+        }, {
+            "type": "select",
+            "id": "background_position",
+            "label": "Background image position",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "Top"
+                }, {
+                    "value": "left top",
+                    "label": "Top Left"
+                }, {
+                    "value": "center top",
+                    "label": "Top Center"
+                }, {
+                    "value": "right top",
+                    "label": "Top Right"
+                }, {
+                    "value": "center",
+                    "label": "Center"
+                }, {
+                    "value": "left center",
+                    "label": "Center Left"
+                }, {
+                    "value": "right center",
+                    "label": "Center Right"
+                }, {
+                    "value": "bottom",
+                    "label": "Bottom"
+                }, {
+                    "value": "left bottom",
+                    "label": "Bottom Left"
+                }, {
+                    "value": "center bottom",
+                    "label": "Bottom Center"
+                }, {
+                    "value": "right bottom",
+                    "label": "Bottom Right"
+                }
+            ],
+            "default": "center"
+        }, {
+            "type": "range",
+            "id": "background_overlay_intensity",
+            "label": "Background image overlay intensity",
+            "min": 0,
+            "max": 50,
+            "step": 1,
+            "default": 10
+        }, {
+            "type": "color",
+            "id": "background_overlay_color",
+            "label": "Background image overlay color",
+            "default": "#000000"
+        }, {
+            "type": "header",
+            "content": "END Section Settings"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "text_title",
+            "name": "Carousel Title",
+            "settings": [
+                {
+                    "type": "number",
+                    "id": "max_width",
+                    "label": "Max Width (px)",
+                    "info": "Enter 0 for 100%",
+                    "default": 500
+                }, {
+                    "type": "header",
+                    "content": "Body"
+                }, {
+                    "type": "richtext",
+                    "id": "rich_text",
+                    "label": "Text Rich",
+                    "info": "Use only this or Text HTML not both"
+                }, {
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Text Liquid",
+                    "info": "Will override Text Rich content"
+                }, {
+                    "type": "html",
+                    "id": "text",
+                    "label": "Text HTML",
+                    "info": "Use only this or Text Rich not both"
+                }, {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "mobile_align",
+                    "label": "Mobile text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "size",
+                    "label": "Size",
+                    "default": "default",
+                    "options": [
+                        {
+                            "label": "default",
+                            "value": "default"
+                        }, {
+                            "label": "xSmall",
+                            "value": "xsmall"
+                        }, {
+                            "label": "Small",
+                            "value": "small"
+                        }, {
+                            "label": "Normal",
+                            "value": "normal"
+                        }, {
+                            "label": "Large",
+                            "value": "large"
+                        }, {
+                            "label": "XLarge",
+                            "value": "xlarge"
+                        }, {
+                            "label": "XXLarge",
+                            "value": "xxlarge"
+                        }, {
+                            "label": "XXXLarge",
+                            "value": "xxxlarge"
+                        }
+                    ]
+                }, {
+                    "type": "color",
+                    "id": "color",
+                    "label": "Color"
+                }, {
+                    "type": "checkbox",
+                    "id": "bold",
+                    "label": "Bold"
+                }, {
+                    "type": "checkbox",
+                    "id": "italic",
+                    "label": "Italic"
+                }, {
+                    "type": "checkbox",
+                    "id": "small",
+                    "label": "small"
+                }, {
+                    "type": "text",
+                    "id": "padding",
+                    "label": "Padding",
+                    "info": "Accepts same input as CSS padding",
+                    "default": "0 20px 40px"
+                }, {
+                    "type": "text",
+                    "id": "classes",
+                    "label": "Classes"
+                }, {
+                    "type": "text",
+                    "id": "line_height",
+                    "label": "Line Height",
+                    "default": "1.2"
+                }
+            ]
+        }, {
+            "type": "result_cell",
+            "name": "Slide Cell",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "result_image",
+                    "label": "Result Image"
+                }, {
+                    "type": "text",
+                    "id": "image_padding",
+                    "label": "Image Padding",
+                    "info": "Accepts same input as CSS padding",
+                    "default": "0px 20px 20px"
+                }, {
+                    "type": "header",
+                    "content": "Text"
+                }, {
+                    "type": "number",
+                    "id": "max_width",
+                    "label": "Text Max Width (px)",
+                    "info": "Enter 0 for 100%",
+                    "default": 500
+                }, {
+                    "type": "richtext",
+                    "id": "rich_text",
+                    "label": "Text Rich",
+                    "info": "Use only this or Text HTML not both"
+                }, {
+                    "type": "liquid",
+                    "id": "text_liquid",
+                    "label": "Text Liquid",
+                    "info": "Will override Text Rich content"
+                }, {
+                    "type": "html",
+                    "id": "text",
+                    "label": "Text HTML",
+                    "info": "Use only this or Text Rich not both"
+                }, {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "mobile_align",
+                    "label": "Mobile text alignment",
+                    "default": "center",
+                    "options": [
+                        {
+                            "label": "Center",
+                            "value": "center"
+                        }, {
+                            "label": "Right",
+                            "value": "right"
+                        }, {
+                            "label": "Left",
+                            "value": "left"
+                        }
+                    ]
+                }, {
+                    "type": "select",
+                    "id": "size",
+                    "label": "Size",
+                    "default": "default",
+                    "options": [
+                        {
+                            "label": "default",
+                            "value": "default"
+                        }, {
+                            "label": "xSmall",
+                            "value": "xsmall"
+                        }, {
+                            "label": "Small",
+                            "value": "small"
+                        }, {
+                            "label": "Normal",
+                            "value": "normal"
+                        }, {
+                            "label": "Large",
+                            "value": "large"
+                        }, {
+                            "label": "XLarge",
+                            "value": "xlarge"
+                        }, {
+                            "label": "XXLarge",
+                            "value": "xxlarge"
+                        }, {
+                            "label": "XXXLarge",
+                            "value": "xxxlarge"
+                        }
+                    ]
+                }, {
+                    "type": "color",
+                    "id": "color",
+                    "label": "Color"
+                }, {
+                    "type": "checkbox",
+                    "id": "bold",
+                    "label": "Bold"
+                }, {
+                    "type": "checkbox",
+                    "id": "italic",
+                    "label": "Italic"
+                }, {
+                    "type": "checkbox",
+                    "id": "small",
+                    "label": "small"
+                }, {
+                    "type": "text",
+                    "id": "padding",
+                    "label": "Padding",
+                    "info": "Accepts same input as CSS padding",
+                    "default": "0 20px"
+                }, {
+                    "type": "text",
+                    "id": "classes",
+                    "label": "Classes"
+                }, {
+                    "type": "text",
+                    "id": "line_height",
+                    "label": "Line Height",
+                    "default": "1.2"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "JOD | Carousel",
+            "category": "Custom"
+        }
+    ]
+}
+
+{% endschema %}
