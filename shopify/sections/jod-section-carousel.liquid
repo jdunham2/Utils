@@ -1,3 +1,5 @@
+<script defer src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+<link href="https://unpkg.com/flickity@2/dist/flickity.min.css" rel="stylesheet">
 <style>
     .section__{{ section.id }} .jd-text--xsmall {
         font-size: .975rem;
@@ -20,6 +22,19 @@
     .section__{{ section.id }} .jd-text--xxxlarge {
         font-size: 5rem;
     }
+    .section__{{ section.id }} .flickity-prev-next-button {
+        {% if section.settings.flickity_button_bg %}
+        background-color: {{ section.settings.flickity_button_bg }}77;
+        {% endif %}
+    }
+    {% if section.settings.flickity_button_position %}
+        .section__{{ section.id }} .flickity-prev-next-button.next {
+            right: {{ section.settings.flickity_button_position }}px;
+        }
+        .section__{{ section.id }} .flickity-prev-next-button.previous {
+            left: {{ section.settings.flickity_button_position }}px;
+        }
+    {% endif %}
 
     /* RESULTS CAROUSEL */
     .section__{{section.id}} {
@@ -325,6 +340,15 @@ document.addEventListener("DOMContentLoaded", function() {
             "id": "cell_width_tablet_down",
             "label": "Cell Width Tablet Down",
             "default": "calc((100% / 4.5) + 20%)"
+        }, {
+            "type": "number",
+            "id": "flickity_button_position",
+            "label": "Arrow position",
+            "default": 10
+        }, {
+            "type": "color",
+            "id": "flickity_button_bg",
+            "label": "Arrow bg color"
         }, {
             "type": "textarea",
             "id": "flickity_overrides",
