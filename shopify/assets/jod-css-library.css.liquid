@@ -1,3 +1,4 @@
+{% comment %}
 /** ============================================================================
     JOD CSS Library | key - https://mui.com/system/properties/
 
@@ -6,6 +7,7 @@
         <link rel="stylesheet" href="{{ 'jod-css-library.css' | asset_url | append: '&enable_css_minification=1' }}">
         {{ 'jod-css-library.css' | asset_url | append: '&enable_css_minification=1' | stylesheet_tag }}
 ============================================================================ **/
+{% endcomment %}
 {% assign mediaQuerySizes = ',--mobile,--tablet,--tablet-down,--desktop' | split: ',' %}
 {% for mediaSize in mediaQuerySizes %}
     {% if mediaSize == '--mobile' %}
