@@ -134,6 +134,27 @@
         min-height: 100%;
     }
 
+    /* height */
+    /* maxHeight */
+    /* max-height-4 - 400 (4px - 400px) */
+    {% for i in (4..400) %}
+        .height-{{i}}{{mediaSize}}, .h-{{i}}{{mediaSize}} {
+            height: {{i}}px;
+        }
+        .max-height-{{i}}{{mediaSize}} {
+            max-height: {{i}}px;
+        }
+    {% endfor %}
+    /* max-height-500, 600, 700, 800, 900, 1000, 1100, 1200 */
+    {% for i in (5..12) %}
+        .height-{{i}}00{{mediaSize}}, .h-{{i}}00{{mediaSize}} {
+            height: {{i}}00px;
+        }
+        .max-height-{{i}}00{{mediaSize}} {
+            max-height: {{i}}00px;
+        }
+    {% endfor %}
+
     /* display */
     {% assign displayOptions = 'inline,block,flex,grid,inline-block,inline-flex,inline-grid' | split: ',' %}
     {% for displayOption in displayOptions %}
@@ -201,6 +222,22 @@
         }
     {% endfor %}
 
+    /* object fit */
+    {% assign fitVariants = 'contain,cover,inherit,none' | split: ',' %}
+    {% for fitVariant in fitVariants %}
+        .object-fit-{{ fitVariant }}{{ mediaSize }} {
+           object-fit: {{ fitVariant }};
+        }
+    {% endfor %}
+
+    /* object position */
+    {% assign positionVariants = 'top,right,bottom,left,center,right-top,right-bottom,left-top,left-bottom,center-top,center-bottom,inherit,initial,unset' | split: ',' %}
+    {% for positionVariant in positionVariants %}
+        .object-position-{{ positionVariant }}{{ mediaSize }} {
+           object-position: {{ positionVariant | replace: '-', ' ' }};
+        }
+    {% endfor %}
+
     /* padding 0 - 100px */
     /* p, padding */
     /* pb, paddingBottom */
@@ -250,12 +287,18 @@
     /* maxWidth */
     /* max-width-4 - 400 (4px - 400px) */
     {% for i in (4..400) %}
+        .width-{{i}}{{mediaSize}}, w-{{i}}{{mediaSize}} {
+            width: {{i}}px;
+        }
         .max-width-{{i}}{{mediaSize}} {
             max-width: {{i}}px;
         }
     {% endfor %}
     /* max-width-500, 600, 700, 800, 900, 1000, 1100, 1200 */
     {% for i in (5..12) %}
+        .width-{{i}}00{{mediaSize}}, w-{{i}}00{{mediaSize}} {
+            width: {{i}}00px;
+        }
         .max-width-{{i}}00{{mediaSize}} {
             max-width: {{i}}00px;
         }
