@@ -2,6 +2,9 @@
 /** ============================================================================
     JOD CSS Library | key - https://mui.com/system/properties/
 
+    Additional Properties:
+    line-clamp-X
+
     Created in Liquid for Shopify
     add to theme.liquid with
         <link rel="stylesheet" href="{{ 'jod-css-library.css' | asset_url | append: '&enable_css_minification=1' }}">
@@ -156,6 +159,16 @@
         }
         .row-gap-{{i}}{{mediaSize}} {
             row-gap: {{i}}px;
+        }
+    {% endfor %}
+
+    /* line-clamp: ${value} */
+    {% for i in (1..6) %}
+        .line-clamp-{{i}}{{mediaSize}} {
+            -webkit-line-clamp: {{i}};
+             display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     {% endfor %}
 
