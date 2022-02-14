@@ -4,6 +4,8 @@
 
     Additional Properties:
     line-clamp-X
+    font-size
+    line-height
 
     Created in Liquid for Shopify
     add to theme.liquid with
@@ -163,6 +165,29 @@
         }
     {% endfor %}
 
+    /* flex-direction */
+    {% assign directionOptions = 'row,column' | split: ',' %}
+    {% for directionOption in directionOptions %}
+        .flex-direction-{{ directionOption }}{{mediaSize}} {
+            flex-direction: {{ directionOption }};
+        }
+    {% endfor %}
+
+    /* flex-wrap */
+    {% assign wrapOptions = 'wrap,nowrap' | split: ',' %}
+    {% for wrapOption in wrapOptions %}
+        .flex-{{ wrapOption }}{{mediaSize}} {
+            flex-wrap: {{ wrapOption }};
+        }
+    {% endfor %}
+
+    /* font-size-8 - 75 (8px-75px) */
+    {% for i in (8..75) %}
+        .font-size-{{i}}{{mediaSize}} {
+            font-size: {{i}}px;
+        }
+    {% endfor %}
+
     /* grid-template-columns: repeat(${value}, 1fr) */
     {% for i in (0..10) %}
         .grid-template-columns-{{i}}{{mediaSize}} {
@@ -191,6 +216,16 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+    {% endfor %}
+
+    /* line-height-${value}: ${value} */
+    /* values 01 - 16 = 0.1 - 1.6 */
+    {% for i in (0..1) %}
+        {% for j in (1..6) %}
+            .line-height-{{ i }}{{ j }}{{ mediaSize }} {
+              line-height: {{i}}.{{j}};
+            }
+        {% endfor %}
     {% endfor %}
 
     /* margin 0 - 200px */
@@ -275,11 +310,11 @@
         }
     {% endfor %}
 
-    /* font */{{mediaSize}}
-    /* font-size-8 - 75 (8px-75px) */
-    {% for i in (8..75) %}
-        .font-size-{{i}}{{mediaSize}} {
-            font-size: {{i}}px;
+    /* text-align */
+    {% assign alignOptions = 'left,center,right' | split: ',' %}
+    {% for alignOption in alignOptions %}
+        .text-align-{{ alignOption }}{{mediaSize}} {
+            text-align: {{ alignOption }};
         }
     {% endfor %}
 
@@ -309,15 +344,7 @@
         }
     {% endif %}
 {% endfor %}
-.line-height-1 {
-    line-height: 1;
-}
-.line-height-12 {
-    line-height: 1.2;
-}
-.line-height-14 {
-    line-height: 1.4;
-}
+
 .text-size-075 {
     font-size: 0.75rem;
 }
@@ -519,15 +546,6 @@
     display: none !important;
 }
 @media screen and (max-width: 499px) {
-    .line-height-1--mobile {
-        line-height: 1;
-    }
-    .line-height-12--mobile {
-        line-height: 1.2;
-    }
-    .line-height-14--mobile {
-        line-height: 1.4;
-    }
     .text-size-095--mobile {
         font-size: 0.95rem;
     }
@@ -729,24 +747,15 @@
     }
 }
 @media screen and (max-width: 799px) and (min-width: 500px) {
-    .line-height-1--tablet {
-        line-height: 1;
-    }
-    .line-height-12--tablet {
-        line-height: 1.2;
-    }
-    .line-height-14--tablet {
-        line-height: 1.4;
-    }
     .text-size-1--tablet {
         font-size: 0.75rem;
     }
     .text-size-075--tablet {
-    font-size: 0.75rem;
-}
-      .text-size-095--tablet {
-    font-size: 0.95rem;
-}
+      font-size: 0.75rem;
+    }
+    .text-size-095--tablet {
+      font-size: 0.95rem;
+    }
     .text-size-1--tablet {
         font-size: 1rem;
     }
@@ -942,23 +951,14 @@
     }
 }
 @media screen and (max-width: 799px) {
-    .line-height-1--tablet-down {
-        line-height: 1 !important;
-    }
-    .line-height-12--tablet-down {
-        line-height: 1.2;
-    }
-    .line-height-14--tablet-down {
-        line-height: 1.4;
-    }
     .text-size-075--tablet-down {
-    font-size: 0.75rem;
+      font-size: 0.75rem;
     }
     .text-size-095--tablet-down {
-    font-size: 0.95rem;
+      font-size: 0.95rem;
     }
     .text-size-1--tablet-down {
-        font-size: 1rem;
+      font-size: 1rem;
     }
     .text-size-15--tablet-down {
         font-size: 1.5rem;
@@ -1152,18 +1152,9 @@
     }
 }
 @media screen and (min-width: 800px) {
-    .line-height-1--desktop {
-        line-height: 1;
-    }
-    .line-height-12--desktop {
-        line-height: 1.2;
-    }
-    .line-height-14--desktop {
-        line-height: 1.4;
-    }
     .text-size-075--desktop {
-    font-size: 0.75rem;
-}
+      font-size: 0.75rem;
+    }
     .text-size-1--desktop {
         font-size: 1rem;
     }
