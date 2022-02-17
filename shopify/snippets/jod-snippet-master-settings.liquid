@@ -134,7 +134,7 @@
 
 {% if background_image %}
     <div class="jd-absolute-full">
-        <img class="jd-absolute-full object-fit--jd {{ section.settings.section_bg_image_classes }}" src="{{ background_image | img_url: '300x' }}" srcset="{% render 'bgset', image: background_image %}" width="300" height="{{ 300 | divided_by: background_image.aspect_ratio | round }}" alt="{{ background_image.alt }}" loading="lazy"/>
+        <img class="jd-absolute-full object-fit--jd {{ section.settings.section_bg_image_classes }}" src="{{ background_image | img_url: '1200x' }}" srcset="{% render 'bgset', image: background_image %}" width="1200" height="{{ 1200 | divided_by: background_image.aspect_ratio | round }}" alt="{{ background_image.alt }}" loading="lazy"/>
         <div class="overlay--jd"></div>
     </div>
 {% endif %}
