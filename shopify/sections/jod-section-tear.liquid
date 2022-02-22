@@ -1,0 +1,252 @@
+<!--
+    Since Shopify still renders 'hidden' sections
+    we check if the section has any child nodes to see if it is empty
+-->
+
+<section class="section section__{{ section.id }} {{ section.settings.section_classes }}">
+  {% render 'jod-snippet-master-settings', section: section %}
+  <div class="jd-content-container jd-content-container--{{ section.settings.container_size }}"></div>
+</section>
+
+<script type="text/javascript">
+  if (Shopify.designMode) {
+    document.addEventListener("shopify:section:load", () => {
+      showHideSection();
+    });
+  }
+
+  showHideSection();
+  function showHideSection() {
+    const hide_if_previous_hidden = "{{ section.settings.hide_if_previous_hidden }}".toLowerCase() === "true";
+    const hide_if_next_hidden = "{{ section.settings.hide_if_next_hidden }}".toLowerCase() === "true";
+
+    const parentSection = document.querySelector(".section__{{ section.id }}").closest(".shopify-section");
+
+    if (hide_if_previous_hidden) {
+      const previousSection = parentSection.previousElementSibling;
+      if (previousSection && previousSection.childElementCount === 0) {
+        parentSection.style.display = "none";
+      }
+    }
+
+    if (hide_if_next_hidden) {
+      const nextSection = parentSection.nextElementSibling;
+      if (nextSection && nextSection.childElementCount === 0) {
+        nextSection.style.display = "none";
+      }
+    }
+  }
+</script>
+
+{% schema %}
+{
+    "name": "JOD | Tear",
+    "class": "jod-tear",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "hide_if_previous_hidden",
+            "label": "Hide when previous section is hidden",
+            "default": false,
+            "info": "Save to see changes"
+        }, {
+            "type": "checkbox",
+            "id": "hide_if_next_hidden",
+            "label": "Hide when following section is hidden",
+            "default": false,
+            "info": "Save to see changes"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Settings"
+        }, {
+            "type": "paragraph",
+            "content": "##########"
+        }, {
+            "type": "header",
+            "content": "Section Spacing"
+        }, {
+            "type": "checkbox",
+            "id": "hide_desktop",
+            "label": "Hide on Desktop",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_tablet",
+            "label": "Hide on Tablet",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "hide_mobile",
+            "label": "Hide on Mobile",
+            "default": false
+        }, {
+            "type": "text",
+            "id": "section_classes",
+            "label": "Section classes"
+        }, {
+            "type": "liquid",
+            "id": "section_css",
+            "label": "Section CSS",
+            "default": ".section { }",
+            "info": "use .section - (will be appended with dynamic id)"
+        }, {
+            "type": "select",
+            "id": "container_size",
+            "label": "Max Width",
+            "options": [
+                {
+                    "value": "tiny",
+                    "label": "Tiny"
+                }, {
+                    "value": "small",
+                    "label": "Small"
+                }, {
+                    "value": "medium",
+                    "label": "Medium"
+                }, {
+                    "value": "large",
+                    "label": "Large"
+                }, {
+                    "value": "xlarge",
+                    "label": "xLarge"
+                }, {
+                    "value": "full",
+                    "label": "Full"
+                }
+            ],
+            "default": "large"
+        }, {
+            "type": "text",
+            "id": "min_height",
+            "label": "Min Height",
+            "default": "100%"
+        }, {
+            "type": "text",
+            "id": "padding",
+            "label": "Padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "padding_mobile_new",
+            "label": "Tablet down padding",
+            "info": "Accepts same input as css padding",
+            "default": "0px 20px"
+        }, {
+            "type": "text",
+            "id": "margin",
+            "label": "Section margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "text",
+            "id": "margin_tablet_down",
+            "label": "Tablet down margin",
+            "info": "Accepts same input as css margin",
+            "default": "0px 0px"
+        }, {
+            "type": "header",
+            "content": "Section Background Color"
+        }, {
+            "type": "color",
+            "id": "text_color",
+            "label": "Section text color"
+        }, {
+            "type": "color",
+            "id": "background_color",
+            "label": "Section background color"
+        }, {
+            "type": "header",
+            "content": "Section Background Image"
+        }, {
+            "type": "text",
+            "id": "section_bg_image_classes",
+            "label": "Background Image Classes"
+        }, {
+            "type": "image_picker",
+            "id": "background_image",
+            "label": "Section background image"
+        }, {
+            "type": "select",
+            "id": "background_fit",
+            "label": "Background image fit",
+            "options": [
+                {
+                    "value": "cover",
+                    "label": "Cover"
+                }, {
+                    "value": "contain",
+                    "label": "Contain"
+                }
+            ],
+            "default": "cover"
+        }, {
+            "type": "select",
+            "id": "background_position",
+            "label": "Background image position",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "Top"
+                }, {
+                    "value": "left top",
+                    "label": "Top Left"
+                }, {
+                    "value": "center top",
+                    "label": "Top Center"
+                }, {
+                    "value": "right top",
+                    "label": "Top Right"
+                }, {
+                    "value": "center",
+                    "label": "Center"
+                }, {
+                    "value": "left center",
+                    "label": "Center Left"
+                }, {
+                    "value": "right center",
+                    "label": "Center Right"
+                }, {
+                    "value": "bottom",
+                    "label": "Bottom"
+                }, {
+                    "value": "left bottom",
+                    "label": "Bottom Left"
+                }, {
+                    "value": "center bottom",
+                    "label": "Bottom Center"
+                }, {
+                    "value": "right bottom",
+                    "label": "Bottom Right"
+                }
+            ],
+            "default": "center"
+        }, {
+            "type": "range",
+            "id": "background_overlay_intensity",
+            "label": "Background image overlay intensity",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "default": 10
+        }, {
+            "type": "color",
+            "id": "background_overlay_color",
+            "label": "Background image overlay color",
+            "default": "#000000"
+        }, {
+            "type": "header",
+            "content": "END Section Settings"
+        }
+    ],
+    "presets": [
+        {
+            "category": "custom",
+            "name": "JOD | Tear"
+        }
+    ]
+}
+{% endschema %}
