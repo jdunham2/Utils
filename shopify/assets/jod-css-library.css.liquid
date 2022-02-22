@@ -4,8 +4,12 @@
 
     Additional Properties:
     line-clamp-X
-    font-size
+    children-font-size
+        font-size applied to all children ( > *)
+    font-size 8-75 + absolute + relative sizes
+        https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     line-height
+    text-transform
 
     Created in Liquid for Shopify
     add to theme.liquid with
@@ -174,19 +178,48 @@
     {% endfor %}
 
     /* flex-wrap */
-    {% assign wrapOptions = 'wrap,nowrap' | split: ',' %}
+    {% assign wrapOptions = 'wrap,nowrap,wrap-reverse' | split: ',' %}
     {% for wrapOption in wrapOptions %}
         .flex-{{ wrapOption }}{{mediaSize}} {
             flex-wrap: {{ wrapOption }};
         }
     {% endfor %}
 
-    /* font-size-8 - 75 (8px-75px) */
+    /* font-size
+      <length> values
+        8 - 75 (8px-75px)
+      <absolute-size> values
+        font-size: xx-small;
+        font-size: x-small;
+        font-size: small;
+        font-size: medium;
+        font-size: large;
+        font-size: x-large;
+        font-size: xx-large;
+        font-size: xxx-large;
+      <relative-size> values
+        font-size: smaller;
+        font-size: larger;
+      Global values
+        font-size: inherit;
+        font-size: initial;
+        font-size: revert;
+        font-size: unset
+    */
     {% for i in (8..75) %}
+        .children-font-size-{{i}}{{mediaSize}} > *,
         .font-size-{{i}}{{mediaSize}} {
             font-size: {{i}}px;
         }
     {% endfor %}
+    {% assign fontSizeOptions = 'xx-small,x-small,small,medium,large,x-large,xx-large,xxx-large,smaller,larger,inherit,initial,revert,unset' | split: ',' %}
+    {% for fontSizeOption in fontSizeOptions %}
+        .children-font-size-{{ fontSizeOption }}{{ mediaSize }} > *,
+        .font-size-{{ fontSizeOption }}{{ mediaSize }} {
+            font-size: {{ fontSizeOption }};
+        }
+    {% endfor %}
+
 
     /* grid-template-columns: repeat(${value}, 1fr) */
     {% for i in (0..10) %}
@@ -318,6 +351,29 @@
         }
     {% endfor %}
 
+    /* text-transform
+      https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform
+      Keyword values
+        text-transform: none;
+        text-transform: capitalize;
+        text-transform: uppercase;
+        text-transform: lowercase;
+        text-transform: full-width;
+        text-transform: full-size-kana;
+
+      Global values
+        text-transform: inherit;
+        text-transform: initial;
+        text-transform: revert;
+        text-transform: unset;
+    */
+    {% assign transformOptions = 'none,capitalize,uppercase,lowercase,full,full,inherit,initial,revert,unset' | split: ',' %}
+    {% for transformOption in transformOptions %}
+        .text-{{ transformOption }}{{mediaSize}} {
+            text-transform: {{ transformOption }};
+        }
+    {% endfor %}
+
     /* width */
     /* maxWidth */
     /* max-width-4 - 400 (4px - 400px) */
@@ -379,7 +435,6 @@
 .text-color-white {
     color: #fff !important;
 }
-.text-uppercase
 
 .pt-05 {
     padding-top: 05rem;
@@ -580,7 +635,7 @@
     .text-color-white--mobile {
         color: #fff !important;
     }
-    .text-uppercase
+
 
     .pt-05--mobile {
         padding-top: 05rem;
@@ -784,7 +839,7 @@
     .text-color-white--tablet {
         color: #fff !important;
     }
-    .text-uppercase
+
 
     .pt-05--tablet {
         padding-top: 05rem;
@@ -985,7 +1040,7 @@
     .text-color-white--tablet-down {
         color: #fff !important;
     }
-    .text-uppercase
+
 
     .pt-05--tablet-down {
         padding-top: 05rem;
@@ -1183,7 +1238,7 @@
     .text-color-white--desktop {
         color: #fff !important;
     }
-    .text-uppercase
+
 
     .pt-05--desktop {
         padding-top: 05rem;
