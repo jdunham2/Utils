@@ -8,10 +8,37 @@
   <div class="jd-content-container jd-content-container--{{ section.settings.container_size }}"></div>
 </section>
 
-<script type="text/javascript">
+<script type="module">
   if (Shopify.designMode) {
     document.addEventListener("shopify:section:load", () => {
       showHideSection();
+    });
+  }
+  window.addEventListener("load", (event) => {
+    createObserver();
+  }, false);
+
+  function createObserver() {
+    let observer;
+
+    let options = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0
+    };
+
+    observer = new IntersectionObserver(handleIntersect, options);
+    observer.observe(document.querySelector(".section__{{ section.id }}"));
+  }
+
+  /**
+   * @type {IntersectionObserverCallback} handleIntersect
+   */
+  function handleIntersect(entries, observer) {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        showHideSection();
+      }
     });
   }
 
@@ -32,7 +59,7 @@
     if (hide_if_next_hidden) {
       const nextSection = parentSection.nextElementSibling;
       if (nextSection && nextSection.childElementCount === 0) {
-        nextSection.style.display = "none";
+        parentSection.style.display = "none";
       }
     }
   }
