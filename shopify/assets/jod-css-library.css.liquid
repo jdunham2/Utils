@@ -3,11 +3,12 @@
     JOD CSS Library | key - https://mui.com/system/properties/
 
     Additional Properties:
-    line-clamp-X
+    cursor
     children-font-size
         font-size applied to all children ( > *)
     font-size 8-75 + absolute + relative sizes
         https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
+    line-clamp-X
     line-height
     text-transform
 
@@ -129,6 +130,14 @@
         .border-radius-top-{{i}}{{mediaSize}} {
             border-top-right-radius: {{i}}px;
             border-top-left-radius: {{i}}px;
+        }
+    {% endfor %}
+
+    /* cursor */
+    {% assign cursorVariables = 'pointer,help,zoom-in,zoom-out,wait,text,not-allowed,grab,grabbing,' | split: ',' %}
+    {% for cursorVariable in cursorVariables %}
+        .cursor-{{ cursorVariable }}{{mediaSize}} {
+            cursor: {{ cursorVariable }};
         }
     {% endfor %}
 
