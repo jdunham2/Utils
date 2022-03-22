@@ -1,0 +1,32 @@
+{%- comment -%}
+    Installation Instructions
+    Include assets in theme.liquid
+      {{ 'jod-product-animated-images.css' | asset_url | stylesheet_tag }}
+      {{ 'jod-product-animated-images.js' | asset_url | script_tag }}
+
+    Include on product page (see muscleMeds for example)
+      {% for variant in product.variants %}
+        <div class="animated-images-container animated-images-for__{{ variant.id }}">
+            <div>
+                {%- liquid
+                    if variant.metafields.animated.animated_background.value != blank
+                        render 'jod-product-animated-images', image: variant.metafields.animated.animated_background.value, type: 'background'
+                    elsif product.metafields.animated.animated_background_image != blank
+                        render 'jod-product-animated-images', image: product.metafields.animated.animated_background_image, type: 'background'
+                    endif
+                    if variant.metafields.animated.animated_foreground.value != blank
+                        render 'jod-product-animated-images', image: variant.metafields.animated.animated_foreground.value, type: 'foreground'
+                    elsif product.metafields.animated.animated_foreground_image != blank
+                        render 'jod-product-animated-images', image: product.metafields.animated.animated_foreground_image, type: 'foreground'
+                    endif
+                -%}
+            </div>
+        </div>
+    {% endfor %}
+{%- endcomment -%}
+
+<div class="product_image_{{ type }}">
+    {% if image != blank %}
+        <img src="{{ image | img_url: '900x' }}">
+    {% endif %}
+</div>
