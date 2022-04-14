@@ -162,7 +162,7 @@
     {% endfor %}
 
     /* display */
-    {% assign displayOptions = 'inline,block,flex,grid,inline-block,inline-flex,inline-grid' | split: ',' %}
+    {% assign displayOptions = 'none,inline,block,flex,grid,inline-block,inline-flex,inline-grid' | split: ',' %}
     {% for displayOption in displayOptions %}
         .display-{{ displayOption }}{{mediaSize}} {
             display: {{ displayOption }};
