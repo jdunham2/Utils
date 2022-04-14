@@ -174,7 +174,7 @@
     {% assign displayOptions = 'none,inline,block,flex,grid,inline-block,inline-flex,inline-grid' | split: ',' %}
     {% for displayOption in displayOptions %}
         .display-{{ displayOption }}{{mediaSize}} {
-            display: {{ displayOption }};
+            display: {{ displayOption }}{% if displayOption == 'none' %} !important{% endif %};
         }
     {% endfor %}
 
