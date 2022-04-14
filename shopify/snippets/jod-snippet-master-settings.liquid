@@ -6,7 +6,7 @@
     example use in master-jd-section-settings.liquid
 
 -->
-  {%- liquid
+{%- liquid
     assign background_image = section.settings.background_image
     assign background_fit = section.settings.background_fit | default: 'cover'
     assign background_position = section.settings.background_position | default: 'top'
@@ -73,7 +73,7 @@
       ;
     }
   }
-  .section__{{section.id}}.jd-absolute-full {
+  .section__{{section.id}} .jd-absolute-full {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -82,7 +82,7 @@
     width: 100%;
     clear: both;
   }
-  .section__{{section.id}}.overlay--jd {
+  .section__{{section.id}} .overlay--jd {
     background-color: {{background_overlay_color}}{{background_overlay_intensity}};
     position: absolute;
     top: 0;
@@ -90,36 +90,36 @@
     left: 0;
     right: 0;
   }
-  .section__{{section.id}}.background-fit--jd {
+  .section__{{section.id}} .background-fit--jd {
     background-size: {{background_fit}};
     background-position: {{background_position}};
   }
 
-  .section__{{section.id}}.jd-content-container--full {
+  .section__{{section.id}} .jd-content-container--full {
     max-width: 100%;
   }
 
-  .section__{{section.id}}.jd-content-container--xlarge {
+  .section__{{section.id}} .jd-content-container--xlarge {
     max-width: 1600px;
   }
 
-  .section__{{section.id}}.jd-content-container--large {
+  .section__{{section.id}} .jd-content-container--large {
     max-width: 1400px;
   }
 
-  .section__{{section.id}}.jd-content-container--medium {
+  .section__{{section.id}} .jd-content-container--medium {
     max-width: 1200px;
   }
 
-  .section__{{section.id}}.jd-content-container--small {
+  .section__{{section.id}} .jd-content-container--small {
     max-width: 980px;
   }
 
-  .section__{{section.id}}.jd-content-container--tiny {
+  .section__{{section.id}} .jd-content-container--tiny {
     max-width: 740px;
   }
 
-  .section__{{section.id}}.jd-content-container {
+  .section__{{section.id}} .jd-content-container {
     width: 100%;
     margin: 0 auto;
     z-index: 1;

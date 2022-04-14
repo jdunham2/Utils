@@ -8,6 +8,8 @@
   /* The Modal (background) */
   .jod-modal {
     display: none; /* Hidden by default */
+    opacity: 0; /* Will transition in and out of view */
+    transition: opacity 250ms ease;
     position: fixed; /* Stay in place */
     z-index: 999; /* Sit on top */
     left: 0;
@@ -55,6 +57,11 @@
     text-decoration: none;
     cursor: pointer;
   }
+
+  /* For transition */
+  .jod-modal-visible {
+    opacity: 1;
+  }
 </style>
 
 <!-- The Modal -->
@@ -68,24 +75,52 @@
 </div>
 
 <script>
-  var jodModal = document.getElementById("jod-modal");
-  var jodModalClose = document.getElementById("jod-modal__close");
-  var jodModalContent = document.getElementById("jod-modal__content");
+  /** @type HTMLElement */
+  var jodModal = document.querySelector(".jod-modal");
+  /** @type HTMLElement */
+  var jodModalClose = document.querySelector(".jod-modal__close");
+  /** @type HTMLElement */
+  var jodModalContent = document.querySelector(".jod-modal__content");
 
   /* Open modal */
   var jodOpenModal = function (content, textOnly = false) {
     if (textOnly) {
       jodModalContent.innerText = content;
+    } else if (content instanceof HTMLElement) {
+      // clone the element to remove any event listeners
+      /** @type HTMLElement */
+      const clonedEl = content.cloneNode();
+      // remove the lazy loading attribute of image tags if present
+      clonedEl.removeAttribute("loading");
+      clonedEl.removeAttribute("onclick");
+      clonedEl.classList.remove("cursor-pointer");
+      jodModalContent.appendChild(clonedEl);
     } else {
       jodModalContent.innerHTML = content;
     }
-    jodModal.style.display = "block";
+    jodFadeInModal();
   };
 
   /* Close function */
   var jodCloseModal = function () {
-    jodModal.style.display = "none";
-    jodModalContent.innerHTML = "";
+    jodFadeOutModal();
+  };
+
+  /* Transition effects */
+  var jodFadeInModal = function () {
+    jodModal.style.display = "block";
+    const timeout = setTimeout(() => {
+      jodModal.classList.add("jod-modal-visible");
+      clearTimeout(timeout);
+    }, 250);
+  };
+  var jodFadeOutModal = async function () {
+    jodModal.classList.remove("jod-modal-visible");
+    const timeout = setTimeout(() => {
+      jodModal.style.display = "none";
+      jodModalContent.innerHTML = "";
+      clearTimeout(timeout);
+    }, 300);
   };
 
   /* Event Listener */
