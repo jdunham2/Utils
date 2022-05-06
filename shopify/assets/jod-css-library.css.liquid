@@ -14,8 +14,8 @@
 
     Created in Liquid for Shopify
     add to theme.liquid with
-        <link rel="stylesheet" href="{{ 'jod-css-library.css' | asset_url | append: '&enable_css_minification=1' }}">
-        {{ 'jod-css-library.css' | asset_url | append: '&enable_css_minification=1' | stylesheet_tag }}
+        <link rel="stylesheet" href="{{ 'jod-css-library.css' | asset_url }}">
+        {{ 'jod-css-library.css' | asset_url | stylesheet_tag }}
 ============================================================================ **/
 {% endcomment %}
 {% assign mediaQuerySizes = ',--mobile,--tablet,--tablet-down,--desktop' | split: ',' %}
@@ -171,10 +171,10 @@
     {% endfor %}
 
     /* display */
-    {% assign displayOptions = 'inline,block,flex,grid,inline-block,inline-flex,inline-grid' | split: ',' %}
+    {% assign displayOptions = 'none,inline,block,flex,grid,inline-block,inline-flex,inline-grid' | split: ',' %}
     {% for displayOption in displayOptions %}
         .display-{{ displayOption }}{{mediaSize}} {
-            display: {{ displayOption }};
+            display: {{ displayOption }}{% if displayOption == 'none' %} !important{% endif %};
         }
     {% endfor %}
 
