@@ -404,6 +404,14 @@
         }
     {% endfor %}
 
+    /* width-100 always means 100% */
+    .width-100{{mediaSize}} {
+        width: 100%;
+    }
+    .max-width-100{{mediaSize}} {
+        width: 100%;
+    }
+
     {% if mediaSize != '' %}
         /* Close media queries */
         }
