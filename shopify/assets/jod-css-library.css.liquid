@@ -18,404 +18,412 @@
         {{ 'jod-css-library.css' | asset_url | stylesheet_tag }}
 ============================================================================ **/
 {% endcomment %}
-{% assign mediaQuerySizes = ',--mobile,--tablet,--tablet-down,--desktop' | split: ',' %}
-{% for mediaSize in mediaQuerySizes %}
-    {% if mediaSize == '--mobile' %}
-        @media screen and (max-width: 499px) {
-    {% elsif mediaSize == '--tablet' %}
-        @media screen and (max-width: 799px) and (min-width: 500px) {
-    {% elsif mediaSize == '--tablet-down' %}
-        @media screen and (max-width: 799px) {
-    {% elsif mediaSize == '--desktop' %}
-        @media screen and (min-width: 800px) {
-    {% endif %}
+{% assign importantOrNotFlags = ',--important' | split: ',' %}
+{% for importantOrNotFlag in importantOrNotFlags %}
+  {% if importantOrNotFlag == '--important' %}
+    {% assign importantOrNot = ' !important' %}
+  {% else %}
+    {% assign importantOrNot = '' %}
+  {% endif %}
+  {% assign mediaQuerySizes = ',--mobile,--tablet,--tablet-down,--desktop' | split: ',' %}
+  {% for mediaSize in mediaQuerySizes %}
+      {% if mediaSize == '--mobile' %}
+          @media screen and (max-width: 499px) {
+      {% elsif mediaSize == '--tablet' %}
+          @media screen and (max-width: 799px) and (min-width: 500px) {
+      {% elsif mediaSize == '--tablet-down' %}
+          @media screen and (max-width: 799px) {
+      {% elsif mediaSize == '--desktop' %}
+          @media screen and (min-width: 800px) {
+      {% endif %}
 
-    /* align-items */
-    {% assign alignItemsVariables = 'center,start,end,stretch' | split: ',' %}
-    {% for alignItemsVariable in alignItemsVariables %}
-        .align-items-{{ alignItemsVariable }}{{mediaSize}} {
-            align-items: {{ alignItemsVariable }};
-        }
-        .justify-items-{{ alignItemsVariable }}{{mediaSize}} {
-            justify-items: {{ alignItemsVariable }};
-        }
-    {% endfor %}
+      /* align-items */
+      {% assign alignItemsVariables = 'center,start,end,stretch' | split: ',' %}
+      {% for alignItemsVariable in alignItemsVariables %}
+          .align-items-{{ alignItemsVariable }}{{importantOrNotFlag}}{{mediaSize}} {
+              align-items: {{ alignItemsVariable }}{{importantOrNot}};
+          }
+          .justify-items-{{ alignItemsVariable }}{{importantOrNotFlag}}{{mediaSize}} {
+              justify-items: {{ alignItemsVariable }}{{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* align-content */
-    {% assign justifyContentVariables = 'normal,center,start,end,flex-start,flex-end,space-between,space-around,space-evenly' | split: ',' %}
-    {% for justifyContentVariable in justifyContentVariables %}
-        .align-content-{{ justifyContentVariable }}{{mediaSize}} {
-            align-content: {{ justifyContentVariable }};
-        }
-        .justify-content-{{ justifyContentVariable }}{{mediaSize}} {
-            justify-content: {{ justifyContentVariable }};
-        }
-    {% endfor %}
-
-
-    /* background color */
-    /* bg-color, background-color: var(--color-${value}) */
-    {% assign cssColorVariables = 'primary,secondary' | split: ',' %}
-    {% for cssColorVariable in cssColorVariables %}
-        .bg-color-{{ cssColorVariable }}{{mediaSize}},
-        .background-color-{{ cssColorVariable }}{{mediaSize}} {
-            background-color: var(--color-{{ cssColorVariable }});
-        }
-    {% endfor %}
-
-    /* box-shadow:  */
-    {% assign startingOpacity = 35 %}
-    {% for i in (0..10) %}
-        .box-shadow-{{i}}{{mediaSize}} {
-            {% if forloop.first == true %}
-                box-shadow: unset;
-            {% else %}
-
-                {% assign boxShadowFactor = i | times: 2 %}
-                {% assign opacity = startingOpacity | minus: i %}
-                {% assign opacity = opacity | money_without_currency %}
-
-                box-shadow: 0px {{boxShadowFactor}}px {{boxShadowFactor}}px rgba(0,0,0,{{ opacity }});
-            {% endif %}
-        }
-    {% endfor %}
-
-    /* color */
-    {% assign cssColorVariables = 'primary,secondary' | split: ',' %}
-    {% for cssColorVariable in cssColorVariables %}
-        .color-{{ cssColorVariable }}{{mediaSize}} {
-            color: var(--color-{{ cssColorVariable }});
-        }
-    {% endfor %}
-    .color-white{{mediaSize}} {
-        color: #fff #!important;
-    }
+      /* align-content */
+      {% assign justifyContentVariables = 'normal,center,start,end,flex-start,flex-end,space-between,space-around,space-evenly' | split: ',' %}
+      {% for justifyContentVariable in justifyContentVariables %}
+          .align-content-{{ justifyContentVariable }}{{importantOrNotFlag}}{{mediaSize}} {
+              align-content: {{ justifyContentVariable }}{{importantOrNot}};
+          }
+          .justify-content-{{ justifyContentVariable }}{{importantOrNotFlag}}{{mediaSize}} {
+              justify-content: {{ justifyContentVariable }}{{importantOrNot}};
+          }
+      {% endfor %}
 
 
-    /* border ${value}px solid */
-    /* borderTop ${value}px solid */
-    /* borderRight ${value}px solid */
-    /* borderBottom ${value}px solid */
-    /* borderLeft ${value}px solid */
-    {% assign borderVariants = 'border,border-bottom,border-left,border-right,border-top' | split: ',' %}
-    {% for i in (0..3) %}
-        {% for borderVariant in borderVariants %}
-            .{{ borderVariant }}-{{i}}{{mediaSize}} {
-                {{ borderVariant }}: {{i}}px solid;
-            }
-        {% endfor %}
-    {% endfor %}
+      /* background color */
+      /* bg-color, background-color: var(--color-${value}) */
+      {% assign cssColorVariables = 'primary,secondary' | split: ',' %}
+      {% for cssColorVariable in cssColorVariables %}
+          .bg-color-{{ cssColorVariable }}{{importantOrNotFlag}}{{mediaSize}},
+          .background-color-{{ cssColorVariable }}{{importantOrNotFlag}}{{mediaSize}} {
+              background-color: var(--color-{{ cssColorVariable }}){{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* borderColor var(--color-${value}) - css variable value */
-    {% assign cssColorVariables = 'primary,secondary' | split: ',' %}
-    {% for cssColorVariable in cssColorVariables %}
-        .border-color-{{ cssColorVariable }}{{mediaSize}} {
-            border-color: var(--color-{{ cssColorVariable }});
-        }
-    {% endfor %}
+      /* box-shadow:  */
+      {% assign startingOpacity = 35 %}
+      {% for i in (0..10) %}
+          .box-shadow-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              {% if forloop.first == true %}
+                  box-shadow: unset{{importantOrNot}};
+              {% else %}
 
-    /* border Radius 50% (circle) */
-    .border-radius-50{{mediaSize}} {
-        border-radius: 50%;
-    }
-    /* border Radius 1px - 16px */
-    {% for i in (0..16) %}
-        .border-radius-{{i}}{{mediaSize}} {
-            border-radius: {{i}}px;
-        }
-        .border-radius-bottom-{{i}}{{mediaSize}} {
-            border-bottom-right-radius: {{i}}px;
-            border-bottom-left-radius: {{i}}px;
-        }
-        .border-radius-top-{{i}}{{mediaSize}} {
-            border-top-right-radius: {{i}}px;
-            border-top-left-radius: {{i}}px;
-        }
-    {% endfor %}
+                  {% assign boxShadowFactor = i | times: 2 %}
+                  {% assign opacity = startingOpacity | minus: i %}
+                  {% assign opacity = opacity | money_without_currency %}
 
-    /* cursor */
-    {% assign cursorVariables = 'pointer,help,zoom-in,zoom-out,wait,text,not-allowed,grab,grabbing,' | split: ',' %}
-    {% for cursorVariable in cursorVariables %}
-        .cursor-{{ cursorVariable }}{{mediaSize}} {
-            cursor: {{ cursorVariable }};
-        }
-    {% endfor %}
+                  box-shadow: 0px {{boxShadowFactor}}px {{boxShadowFactor}}px rgba(0,0,0,{{ opacity }}){{importantOrNot}};
+              {% endif %}
+          }
+      {% endfor %}
 
-    /* height */
-    .height-100-percent{{mediaSize}} {
-        height: 100%;
-    }
-    .min-height-100-percent{{mediaSize}} {
-        min-height: 100%;
-    }
-
-    /* height */
-    /* maxHeight */
-    /* max-height-4 - 400 (4px - 400px) */
-    {% for i in (4..400) %}
-        .height-{{i}}{{mediaSize}}, .h-{{i}}{{mediaSize}} {
-            height: {{i}}px;
-        }
-        .max-height-{{i}}{{mediaSize}} {
-            max-height: {{i}}px;
-        }
-    {% endfor %}
-    /* max-height-500, 600, 700, 800, 900, 1000, 1100, 1200 */
-    {% for i in (5..12) %}
-        .height-{{i}}00{{mediaSize}}, .h-{{i}}00{{mediaSize}} {
-            height: {{i}}00px;
-        }
-        .max-height-{{i}}00{{mediaSize}} {
-            max-height: {{i}}00px;
-        }
-    {% endfor %}
-
-    /* display */
-    {% assign displayOptions = 'none,inline,block,flex,grid,inline-block,inline-flex,inline-grid' | split: ',' %}
-    {% for displayOption in displayOptions %}
-        .display-{{ displayOption }}{{mediaSize}} {
-            display: {{ displayOption }}{% if displayOption == 'none' %} !important{% endif %};
-        }
-    {% endfor %}
-
-    /* flex-direction */
-    {% assign directionOptions = 'row,column' | split: ',' %}
-    {% for directionOption in directionOptions %}
-        .flex-direction-{{ directionOption }}{{mediaSize}} {
-            flex-direction: {{ directionOption }};
-        }
-    {% endfor %}
-
-    /* flex-wrap */
-    {% assign wrapOptions = 'wrap,nowrap,wrap-reverse' | split: ',' %}
-    {% for wrapOption in wrapOptions %}
-        .flex-{{ wrapOption }}{{mediaSize}} {
-            flex-wrap: {{ wrapOption }};
-        }
-    {% endfor %}
-
-    /* font-size
-      <length> values
-        8 - 75 (8px-75px)
-      <absolute-size> values
-        font-size: xx-small;
-        font-size: x-small;
-        font-size: small;
-        font-size: medium;
-        font-size: large;
-        font-size: x-large;
-        font-size: xx-large;
-        font-size: xxx-large;
-      <relative-size> values
-        font-size: smaller;
-        font-size: larger;
-      Global values
-        font-size: inherit;
-        font-size: initial;
-        font-size: revert;
-        font-size: unset
-    */
-    {% for i in (8..75) %}
-        .children-font-size-{{i}}{{mediaSize}} > *,
-        .font-size-{{i}}{{mediaSize}} {
-            font-size: {{i}}px;
-        }
-    {% endfor %}
-    {% assign fontSizeOptions = 'xx-small,x-small,small,medium,large,x-large,xx-large,xxx-large,smaller,larger,inherit,initial,revert,unset' | split: ',' %}
-    {% for fontSizeOption in fontSizeOptions %}
-        .children-font-size-{{ fontSizeOption }}{{ mediaSize }} > *,
-        .font-size-{{ fontSizeOption }}{{ mediaSize }} {
-            font-size: {{ fontSizeOption }};
-        }
-    {% endfor %}
+      /* color */
+      {% assign cssColorVariables = 'primary,secondary' | split: ',' %}
+      {% for cssColorVariable in cssColorVariables %}
+          .color-{{ cssColorVariable }}{{importantOrNotFlag}}{{mediaSize}} {
+              color: var(--color-{{ cssColorVariable }}){{importantOrNot}};
+          }
+      {% endfor %}
+      .color-white{{importantOrNotFlag}}{{mediaSize}} {
+          color: #fff #!important{{importantOrNot}};
+      }
 
 
-    /* grid-template-columns: repeat(${value}, 1fr) */
-    {% for i in (0..10) %}
-        .grid-template-columns-{{i}}{{mediaSize}} {
-            grid-template-columns: repeat({{i}}, 1fr);
-        }
-    {% endfor %}
+      /* border ${value}px solid */
+      /* borderTop ${value}px solid */
+      /* borderRight ${value}px solid */
+      /* borderBottom ${value}px solid */
+      /* borderLeft ${value}px solid */
+      {% assign borderVariants = 'border,border-bottom,border-left,border-right,border-top' | split: ',' %}
+      {% for i in (0..3) %}
+          {% for borderVariant in borderVariants %}
+              .{{ borderVariant }}-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+                  {{ borderVariant }}: {{i}}px solid{{importantOrNot}};
+              }
+          {% endfor %}
+      {% endfor %}
 
-    /* grid-gap: ${value}px */
-    {% for i in (0..100) %}
-        .grid-gap-{{i}}{{mediaSize}} {
-            grid-gap: {{i}}px;
-        }
-        .column-gap-{{i}}{{mediaSize}} {
-            column-gap: {{i}}px;
-        }
-        .row-gap-{{i}}{{mediaSize}} {
-            row-gap: {{i}}px;
-        }
-    {% endfor %}
+      /* borderColor var(--color-${value}) - css variable value */
+      {% assign cssColorVariables = 'primary,secondary' | split: ',' %}
+      {% for cssColorVariable in cssColorVariables %}
+          .border-color-{{ cssColorVariable }}{{importantOrNotFlag}}{{mediaSize}} {
+              border-color: var(--color-{{ cssColorVariable }}){{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* line-clamp: ${value} */
-    {% for i in (1..6) %}
-        .line-clamp-{{i}}{{mediaSize}} {
-            -webkit-line-clamp: {{i}};
-             display: -webkit-box;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-    {% endfor %}
+      /* border Radius 50% (circle) */
+      .border-radius-50{{importantOrNotFlag}}{{mediaSize}} {
+          border-radius: 50%{{importantOrNot}};
+      }
+      /* border Radius 1px - 16px */
+      {% for i in (0..16) %}
+          .border-radius-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              border-radius: {{i}}px{{importantOrNot}};
+          }
+          .border-radius-bottom-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              border-bottom-right-radius: {{i}}px{{importantOrNot}};
+              border-bottom-left-radius: {{i}}px{{importantOrNot}};
+          }
+          .border-radius-top-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              border-top-right-radius: {{i}}px{{importantOrNot}};
+              border-top-left-radius: {{i}}px{{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* line-height-${value}: ${value} */
-    /* values 01 - 16 = 0.1 - 1.6 */
-    {% for i in (0..1) %}
-        {% for j in (1..6) %}
-            .line-height-{{ i }}{{ j }}{{ mediaSize }} {
-              line-height: {{i}}.{{j}};
-            }
-        {% endfor %}
-    {% endfor %}
+      /* cursor */
+      {% assign cursorVariables = 'pointer,help,zoom-in,zoom-out,wait,text,not-allowed,grab,grabbing,' | split: ',' %}
+      {% for cursorVariable in cursorVariables %}
+          .cursor-{{ cursorVariable }}{{importantOrNotFlag}}{{mediaSize}} {
+              cursor: {{ cursorVariable }}{{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* margin 0 - 200px */
-    /* m, margin */
-    /* mb, marginBottom */
-    /* ml, marginLeft */
-    /* mr, marginRight */
-    /* mt, marginTop */
-    /* mx, marginX */
-    /* my, marginY */
-    {% assign marginVariants = 'm|margin,mb|margin-bottom,ml|margin-left,mr|margin-right,mt|margin-top' | split: ',' %}
-    {% for i in (0..100) %}
-        {% for marginVariant in marginVariants %}
-            {% assign marginTypes = marginVariant | split: '|' %}
-            .{{ marginTypes[0] }}-{{i}}{{mediaSize}},
-            .{{ marginTypes[1] }}-{{i}}{{mediaSize}} {
-                {{ marginTypes[1] }}: {{i}}px;
-            }
-        {% endfor %}
-        .mx-{{i}}{{mediaSize}},
-        .margin-x-{{i}}{{mediaSize}} {
-            margin-left: {{i}}px;
-            margin-right: {{i}}px;
-        }
-        .my-{{i}}{{mediaSize}},
-        .margin-y-{{i}}{{mediaSize}} {
-            margin-top: {{i}}px;
-            margin-bottom: {{i}}px;
-        }
-    {% endfor %}
+      /* height */
+      .height-100-percent{{importantOrNotFlag}}{{mediaSize}} {
+          height: 100%{{importantOrNot}};
+      }
+      .min-height-100-percent{{importantOrNotFlag}}{{mediaSize}} {
+          min-height: 100%{{importantOrNot}};
+      }
 
-    /* object fit */
-    {% assign fitVariants = 'contain,cover,inherit,none' | split: ',' %}
-    {% for fitVariant in fitVariants %}
-        .object-fit-{{ fitVariant }}{{ mediaSize }} {
-           object-fit: {{ fitVariant }};
-        }
-    {% endfor %}
+      /* height */
+      /* maxHeight */
+      /* max-height-4 - 400 (4px - 400px) */
+      {% for i in (4..400) %}
+          .height-{{i}}{{importantOrNotFlag}}{{mediaSize}}, .h-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              height: {{i}}px{{importantOrNot}};
+          }
+          .max-height-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              max-height: {{i}}px{{importantOrNot}};
+          }
+      {% endfor %}
+      /* max-height-500, 600, 700, 800, 900, 1000, 1100, 1200 */
+      {% for i in (5..12) %}
+          .height-{{i}}00{{importantOrNotFlag}}{{mediaSize}}, .h-{{i}}00{{importantOrNotFlag}}{{mediaSize}} {
+              height: {{i}}00px{{importantOrNot}};
+          }
+          .max-height-{{i}}00{{importantOrNotFlag}}{{mediaSize}} {
+              max-height: {{i}}00px{{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* object position */
-    {% assign positionVariants = 'top,right,bottom,left,center,right-top,right-bottom,left-top,left-bottom,center-top,center-bottom,inherit,initial,unset' | split: ',' %}
-    {% for positionVariant in positionVariants %}
-        .object-position-{{ positionVariant }}{{ mediaSize }} {
-           object-position: {{ positionVariant | replace: '-', ' ' }};
-        }
-    {% endfor %}
+      /* display */
+      {% assign displayOptions = 'none,inline,block,flex,grid,inline-block,inline-flex,inline-grid' | split: ',' %}
+      {% for displayOption in displayOptions %}
+          .display-{{ displayOption }}{{importantOrNotFlag}}{{mediaSize}} {
+              display: {{ displayOption }}{% if displayOption == 'none' %} !important{% endif %};
+          }
+      {% endfor %}
 
-    /* padding 0 - 100px */
-    /* p, padding */
-    /* pb, paddingBottom */
-    /* pl, paddingLeft */
-    /* pr, paddingRight */
-    /* pt, paddingTop */
-    /* px, paddingX */
-    /* py, paddingY */
-    {% assign paddingVariants = 'p|padding,pb|padding-bottom,pl|padding-left,pr|padding-right,pt|padding-top' | split: ',' %}
-    {% for i in (0..100) %}
-        {% for paddingVariant in paddingVariants %}
-            {% assign paddingTypes = paddingVariant | split: '|' %}
-            .{{ paddingTypes[0] }}-{{i}}{{mediaSize}},
-            .{{ paddingTypes[1] }}-{{i}}{{mediaSize}} {
-                {{ paddingTypes[1] }}: {{i}}px;
-            }
-        {% endfor %}
-        .px-{{i}}{{mediaSize}},
-        .padding-x-{{i}}{{mediaSize}} {
-            padding-left: {{i}}px;
-            padding-right: {{i}}px;
-        }
-        .py-{{i}}{{mediaSize}},
-        .padding-y-{{i}}{{mediaSize}} {
-            padding-top: {{i}}px;
-            padding-bottom: {{i}}px;
-        }
-    {% endfor %}
+      /* flex-direction */
+      {% assign directionOptions = 'row,column' | split: ',' %}
+      {% for directionOption in directionOptions %}
+          .flex-direction-{{ directionOption }}{{importantOrNotFlag}}{{mediaSize}} {
+              flex-direction: {{ directionOption }}{{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* position */
-    {% assign positionOptions = 'absolute,fixed,relative,static,sticky,unset' | split: ',' %}
-    {% for positionOption in positionOptions %}
-        .position-{{ positionOption }}{{mediaSize}} {
-            position: {{ positionOption }};
-        }
-    {% endfor %}
+      /* flex-wrap */
+      {% assign wrapOptions = 'wrap,nowrap,wrap-reverse' | split: ',' %}
+      {% for wrapOption in wrapOptions %}
+          .flex-{{ wrapOption }}{{importantOrNotFlag}}{{mediaSize}} {
+              flex-wrap: {{ wrapOption }}{{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* text-align */
-    {% assign alignOptions = 'left,center,right' | split: ',' %}
-    {% for alignOption in alignOptions %}
-        .text-align-{{ alignOption }}{{mediaSize}} {
-            text-align: {{ alignOption }};
-        }
-    {% endfor %}
+      /* font-size
+        <length> values
+          8 - 75 (8px-75px)
+        <absolute-size> values
+          font-size: xx-small;
+          font-size: x-small;
+          font-size: small;
+          font-size: medium;
+          font-size: large;
+          font-size: x-large;
+          font-size: xx-large;
+          font-size: xxx-large;
+        <relative-size> values
+          font-size: smaller;
+          font-size: larger;
+        Global values
+          font-size: inherit;
+          font-size: initial;
+          font-size: revert;
+          font-size: unset
+      */
+      {% for i in (8..75) %}
+          .children-font-size-{{i}}{{importantOrNotFlag}}{{mediaSize}} > *,
+          .font-size-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              font-size: {{i}}px{{importantOrNot}};
+          }
+      {% endfor %}
+      {% assign fontSizeOptions = 'xx-small,x-small,small,medium,large,x-large,xx-large,xxx-large,smaller,larger,inherit,initial,revert,unset' | split: ',' %}
+      {% for fontSizeOption in fontSizeOptions %}
+          .children-font-size-{{ fontSizeOption }}{{ mediaSize }} > *,
+          .font-size-{{ fontSizeOption }}{{ mediaSize }} {
+              font-size: {{ fontSizeOption }}{{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* text-transform
-      https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform
-      Keyword values
-        text-transform: none;
-        text-transform: capitalize;
-        text-transform: uppercase;
-        text-transform: lowercase;
-        text-transform: full-width;
-        text-transform: full-size-kana;
 
-      Global values
-        text-transform: inherit;
-        text-transform: initial;
-        text-transform: revert;
-        text-transform: unset;
-    */
-    {% assign transformOptions = 'none,capitalize,uppercase,lowercase,full,full,inherit,initial,revert,unset' | split: ',' %}
-    {% for transformOption in transformOptions %}
-        .text-{{ transformOption }}{{mediaSize}} {
-            text-transform: {{ transformOption }};
-        }
-    {% endfor %}
+      /* grid-template-columns: repeat(${value}, 1fr) */
+      {% for i in (0..10) %}
+          .grid-template-columns-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              grid-template-columns: repeat({{i}}, 1fr){{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* width */
-    /* maxWidth */
-    /* max-width-4 - 400 (4px - 400px) */
-    {% for i in (4..400) %}
-        .width-{{i}}{{mediaSize}}, w-{{i}}{{mediaSize}} {
-            width: {{i}}px;
-        }
-        .max-width-{{i}}{{mediaSize}} {
-            max-width: {{i}}px;
-        }
-    {% endfor %}
-    /* max-width-500, 600, 700, 800, 900, 1000, 1100, 1200 */
-    {% for i in (5..12) %}
-        .width-{{i}}00{{mediaSize}}, w-{{i}}00{{mediaSize}} {
-            width: {{i}}00px;
-        }
-        .max-width-{{i}}00{{mediaSize}} {
-            max-width: {{i}}00px;
-        }
-    {% endfor %}
+      /* grid-gap: ${value}px */
+      {% for i in (0..100) %}
+          .grid-gap-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              grid-gap: {{i}}px{{importantOrNot}};
+          }
+          .column-gap-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              column-gap: {{i}}px{{importantOrNot}};
+          }
+          .row-gap-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              row-gap: {{i}}px{{importantOrNot}};
+          }
+      {% endfor %}
 
-    /* width-100 always means 100% */
-    .width-100{{mediaSize}} {
-        width: 100%;
-    }
-    .max-width-100{{mediaSize}} {
-        width: 100%;
-    }
+      /* line-clamp: ${value} */
+      {% for i in (1..6) %}
+          .line-clamp-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              -webkit-line-clamp: {{i}}{{importantOrNot}};
+              display: -webkit-box{{importantOrNot}};
+              -webkit-box-orient: vertical{{importantOrNot}};
+              overflow: hidden{{importantOrNot}};
+          }
+      {% endfor %}
 
-    {% if mediaSize != '' %}
-        /* Close media queries */
-        }
-    {% endif %}
+      /* line-height-${value}: ${value} */
+      /* values 01 - 16 = 0.1 - 1.6 */
+      {% for i in (0..1) %}
+          {% for j in (1..6) %}
+              .line-height-{{ i }}{{ j }}{{ mediaSize }} {
+                line-height: {{i}}.{{j}}{{importantOrNot}};
+              }
+          {% endfor %}
+      {% endfor %}
+
+      /* margin 0 - 200px */
+      /* m, margin */
+      /* mb, marginBottom */
+      /* ml, marginLeft */
+      /* mr, marginRight */
+      /* mt, marginTop */
+      /* mx, marginX */
+      /* my, marginY */
+      {% assign marginVariants = 'm|margin,mb|margin-bottom,ml|margin-left,mr|margin-right,mt|margin-top' | split: ',' %}
+      {% for i in (0..100) %}
+          {% for marginVariant in marginVariants %}
+              {% assign marginTypes = marginVariant | split: '|' %}
+              .{{ marginTypes[0] }}-{{i}}{{importantOrNotFlag}}{{mediaSize}},
+              .{{ marginTypes[1] }}-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+                  {{ marginTypes[1] }}: {{i}}px{{importantOrNot}};
+              }
+          {% endfor %}
+          .mx-{{i}}{{importantOrNotFlag}}{{mediaSize}},
+          .margin-x-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              margin-left: {{i}}px{{importantOrNot}};
+              margin-right: {{i}}px{{importantOrNot}};
+          }
+          .my-{{i}}{{importantOrNotFlag}}{{mediaSize}},
+          .margin-y-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              margin-top: {{i}}px{{importantOrNot}};
+              margin-bottom: {{i}}px{{importantOrNot}};
+          }
+      {% endfor %}
+
+      /* object fit */
+      {% assign fitVariants = 'contain,cover,inherit,none' | split: ',' %}
+      {% for fitVariant in fitVariants %}
+          .object-fit-{{ fitVariant }}{{ mediaSize }} {
+            object-fit: {{ fitVariant }}{{importantOrNot}};
+          }
+      {% endfor %}
+
+      /* object position */
+      {% assign positionVariants = 'top,right,bottom,left,center,right-top,right-bottom,left-top,left-bottom,center-top,center-bottom,inherit,initial,unset' | split: ',' %}
+      {% for positionVariant in positionVariants %}
+          .object-position-{{ positionVariant }}{{ mediaSize }} {
+            object-position: {{ positionVariant | replace: '-', ' ' }}{{importantOrNot}};
+          }
+      {% endfor %}
+
+      /* padding 0 - 100px */
+      /* p, padding */
+      /* pb, paddingBottom */
+      /* pl, paddingLeft */
+      /* pr, paddingRight */
+      /* pt, paddingTop */
+      /* px, paddingX */
+      /* py, paddingY */
+      {% assign paddingVariants = 'p|padding,pb|padding-bottom,pl|padding-left,pr|padding-right,pt|padding-top' | split: ',' %}
+      {% for i in (0..100) %}
+          {% for paddingVariant in paddingVariants %}
+              {% assign paddingTypes = paddingVariant | split: '|' %}
+              .{{ paddingTypes[0] }}-{{i}}{{importantOrNotFlag}}{{mediaSize}},
+              .{{ paddingTypes[1] }}-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+                  {{ paddingTypes[1] }}: {{i}}px{{importantOrNot}};
+              }
+          {% endfor %}
+          .px-{{i}}{{importantOrNotFlag}}{{mediaSize}},
+          .padding-x-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              padding-left: {{i}}px{{importantOrNot}};
+              padding-right: {{i}}px{{importantOrNot}};
+          }
+          .py-{{i}}{{importantOrNotFlag}}{{mediaSize}},
+          .padding-y-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              padding-top: {{i}}px{{importantOrNot}};
+              padding-bottom: {{i}}px{{importantOrNot}};
+          }
+      {% endfor %}
+
+      /* position */
+      {% assign positionOptions = 'absolute,fixed,relative,static,sticky,unset' | split: ',' %}
+      {% for positionOption in positionOptions %}
+          .position-{{ positionOption }}{{importantOrNotFlag}}{{mediaSize}} {
+              position: {{ positionOption }}{{importantOrNot}};
+          }
+      {% endfor %}
+
+      /* text-align */
+      {% assign alignOptions = 'left,center,right' | split: ',' %}
+      {% for alignOption in alignOptions %}
+          .text-align-{{ alignOption }}{{importantOrNotFlag}}{{mediaSize}} {
+              text-align: {{ alignOption }}{{importantOrNot}};
+          }
+      {% endfor %}
+
+      /* text-transform
+        https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform
+        Keyword values
+          text-transform: none;
+          text-transform: capitalize;
+          text-transform: uppercase;
+          text-transform: lowercase;
+          text-transform: full-width;
+          text-transform: full-size-kana;
+
+        Global values
+          text-transform: inherit;
+          text-transform: initial;
+          text-transform: revert;
+          text-transform: unset;
+      */
+      {% assign transformOptions = 'none,capitalize,uppercase,lowercase,full,full,inherit,initial,revert,unset' | split: ',' %}
+      {% for transformOption in transformOptions %}
+          .text-{{ transformOption }}{{importantOrNotFlag}}{{mediaSize}} {
+              text-transform: {{ transformOption }}{{importantOrNot}};
+          }
+      {% endfor %}
+
+      /* width */
+      /* maxWidth */
+      /* max-width-4 - 400 (4px - 400px) */
+      {% for i in (4..400) %}
+          .width-{{i}}{{importantOrNotFlag}}{{mediaSize}}, w-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              width: {{i}}px{{importantOrNot}};
+          }
+          .max-width-{{i}}{{importantOrNotFlag}}{{mediaSize}} {
+              max-width: {{i}}px{{importantOrNot}};
+          }
+      {% endfor %}
+      /* max-width-500, 600, 700, 800, 900, 1000, 1100, 1200 */
+      {% for i in (5..12) %}
+          .width-{{i}}00{{importantOrNotFlag}}{{mediaSize}}, w-{{i}}00{{importantOrNotFlag}}{{mediaSize}} {
+              width: {{i}}00px{{importantOrNot}};
+          }
+          .max-width-{{i}}00{{importantOrNotFlag}}{{mediaSize}} {
+              max-width: {{i}}00px{{importantOrNot}};
+          }
+      {% endfor %}
+
+      /* width-100 always means 100% */
+      .width-100{{importantOrNotFlag}}{{mediaSize}} {
+          width: 100%{{importantOrNot}};
+      }
+      .max-width-100{{importantOrNotFlag}}{{mediaSize}} {
+          width: 100%{{importantOrNot}};
+      }
+
+      {% if mediaSize != '' %}
+          /* Close media queries */
+          }
+      {% endif %}
+  {% endfor %}
 {% endfor %}
 
 .text-size-075 {
