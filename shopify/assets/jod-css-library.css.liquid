@@ -8,6 +8,8 @@
         font-size applied to all children ( > *)
     font-size 8-75 + absolute + relative sizes
         https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
+    font-weight
+        https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     line-clamp-X
     line-height
     text-transform
@@ -236,6 +238,40 @@
           }
       {% endfor %}
 
+      /*
+        Keyword values
+        font-weight: normal;
+        font-weight: bold;
+
+        Keyword values relative to the parent
+        font-weight: lighter;
+        font-weight: bolder;
+
+        Numeric keyword values
+        font-weight: 100;
+        font-weight: 200;
+        font-weight: 300;
+        font-weight: 400;// normal
+        font-weight: 500;
+        font-weight: 600;
+        font-weight: 700;// bold
+        font-weight: 800;
+        font-weight: 900;
+
+        Global values
+        font-weight: inherit;
+        font-weight: initial;
+        font-weight: revert;
+        font-weight: revert-layer;
+        font-weight: unset;
+      */
+      {% assign fontWeightOptions = 'normal,bold,lighter,bolder,100,200,300,400,500,600,700,800,900,inherit,initial,revert,unset' | split: ',' %}
+      {% for fontWeightOption in fontWeightOptions %}
+          .font-weight-{{ fontWeightOption }}{{ mediaSize }} {
+              font-weight: {{ fontWeightOption }}{{importantOrNot}};
+          }
+      {% endfor %}
+
 
       /* grid-template-columns: repeat(${value}, 1fr) */
       {% for i in (0..10) %}
@@ -270,7 +306,7 @@
       /* line-height-${value}: ${value} */
       /* values 01 - 16 = 0.1 - 1.6 */
       {% for i in (0..1) %}
-          {% for j in (1..6) %}
+          {% for j in (0..9) %}
               .line-height-{{ i }}{{ j }}{{ mediaSize }} {
                 line-height: {{i}}.{{j}}{{importantOrNot}};
               }
