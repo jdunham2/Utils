@@ -23,7 +23,7 @@
                 continue
             endif
         -%}
-        <div class="block__{{ block.id }} {% if block.settings.full_width_col %} block--full-width {% endif %} {% if block.settings.full_width_col_mobile %} block--full-width--mobile {% endif %} {{ block.settings.block_class }}">
+        <div {{ block.shopify_attributes }} class="block__{{ block.id }} {% if block.settings.full_width_col %} block--full-width {% endif %} {% if block.settings.full_width_col_mobile %} block--full-width--mobile {% endif %} {{ block.settings.block_class }}">
             <style>
                 .section__{{ section.id }} .block__{{ block.id }} {
                     width: 100%;
@@ -100,7 +100,7 @@
         {% if isCarouselCell %}
             <div class="carousel-cell min-height-100-percent {% if block.settings.show_in_mobile_slider == false %} will-remove-cell {% endif %}">
             {% endif %}
-            <div class="block block__{{ block.id }} min-height-100-percent {% if block.settings.full_width_col %} block--full-width {% endif %} {% if block.settings.full_width_col_mobile %} block--full-width--mobile {% endif %} {{ block.settings.block_class }}">
+            <div {{ block.shopify_attributes }} class="block block__{{ block.id }} min-height-100-percent {% if block.settings.full_width_col %} block--full-width {% endif %} {% if block.settings.full_width_col_mobile %} block--full-width--mobile {% endif %} {{ block.settings.block_class }}">
 
                 {% if block.type == 'image_with_text' %}
                     <style>

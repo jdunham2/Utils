@@ -119,7 +119,7 @@
         <div class="title-container">
             {% for block in section.blocks %}
                 {% if block.type == 'text_title' %}
-                    <div class="block__{{ block.id }}">
+                    <div class="block__{{ block.id }}" {{ block.shopify_attributes }}>
                         <style>
                             .section__{{ section.id }} .block__{{ block.id }} {
                                 width: 100%;
@@ -199,7 +199,7 @@
                 endif
             -%}
                 <div class="result_cell">
-                    <div class="block block__{{block.id}}">
+                    <div class="block block__{{block.id}}" {{ block.shopify_attributes }}>
                         <!-- Image -->
                         {% if block.settings.result_image != blank %}
                             <div class="result_image">

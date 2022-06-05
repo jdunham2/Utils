@@ -55,7 +55,7 @@
         <div class="title-container">
             {% for block in section.blocks %}
                 {% if block.type == 'text_title' %}
-                    <div class="block__{{ block.id }}">
+                    <div class="block__{{ block.id }}" {{ block.shopify_attributes }}>
                         <style>
                             .section__{{ section.id }} .block__{{ block.id }} {
                                 width: 100%;
@@ -241,7 +241,7 @@
                         }
                         /*  */
                     </style>
-                    <div class="block block__{{ block.id }} {{ block.settings.block_class }}">
+                    <div class="block block__{{ block.id }} {{ block.settings.block_class }}" {{ block.shopify_attributes }}>
                         <div class="accordion-wrapper">
                             <div class="accordion-heading" onclick="toggleVisibility('{{ block.id }}')">
                                 <h4>
