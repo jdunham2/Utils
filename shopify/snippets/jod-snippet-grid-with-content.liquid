@@ -52,7 +52,7 @@
                         color: {{ block.settings.color }};
                     {% endif %}
                     {% if block.settings.bold == true %}
-                        /* font-weight: 700; */
+                        font-weight: 700;
                         font-family: var(--text-bold);
                     {% endif %}
                      {% if block.settings.italic == true %}
@@ -194,7 +194,7 @@
                         .section__{{section.id}} .block__{{ block.id }} .jod-section-text__text {
                             line-height: {{ block.settings.line_height | default: 1.2 }};
                             {% if block.settings.bold == true %}
-                                /* font-weight: 700; */
+                                font-weight: 700;
                                 font-family: var(--text-bold);
                             {% endif %}
                             {% if block.settings.italic == true %}
