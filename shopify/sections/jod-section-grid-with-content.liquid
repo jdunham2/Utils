@@ -121,7 +121,6 @@
 </script>
 
 {% schema %}
-
 {
     "name": "JOD | Grid with Content",
     "class": "jod-section-grid-with-content",
@@ -733,6 +732,10 @@
                     "type": "header",
                     "content": "Body"
                 }, {
+                    "type": "text",
+                    "id": "classes",
+                    "label": "Classes"
+                }, {
                     "type": "richtext",
                     "id": "rich_text",
                     "label": "Richtext content"
@@ -807,16 +810,6 @@
                     "label": "small"
                 }, {
                     "type": "text",
-                    "id": "padding",
-                    "label": "Padding",
-                    "info": "Accepts same input as CSS padding",
-                    "default": "0 20px"
-                }, {
-                    "type": "text",
-                    "id": "classes",
-                    "label": "Classes"
-                }, {
-                    "type": "text",
                     "id": "line_height",
                     "label": "Line Height",
                     "default": "1.2"
@@ -831,5 +824,4 @@
         }
     ]
 }
-
 {% endschema %}
